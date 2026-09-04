@@ -1,0 +1,27 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+private/
+credentials/
+
+# Personal/legal information
+private-legal/
+legal-private/
+personal-data/
+id-documents/
+
+# Local Termux files
+.termux/
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
