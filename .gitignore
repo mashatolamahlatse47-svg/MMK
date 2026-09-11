@@ -25,3 +25,14 @@ id-documents/
 Thumbs.db
 .vscode/
 .idea/
+
+# MMK local backups
+BACKUPS/
+mmk-product-factory/BACKUPS/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# MMK local databases
+*.db

@@ -1,0 +1,29 @@
+[
+    {
+        "id": "MMK-001",
+        "name": "MMK Business Starter",
+        "category": "Digital Products",
+        "description": "Business starter resources for small businesses.",
+        "price": 99,
+        "currency": "ZAR",
+        "available": true
+    },
+    {
+        "id": "MMK-002",
+        "name": "MMK Digital Template Pack",
+        "category": "Templates",
+        "description": "Reusable business and marketing templates.",
+        "price": 49,
+        "currency": "ZAR",
+        "available": true
+    },
+    {
+        "id": "MMK-003",
+        "name": "MMK Grocery Starter",
+        "category": "Grocery",
+        "description": "Starter grocery ordering system.",
+        "price": 0,
+        "currency": "ZAR",
+        "available": true
+    }
+]

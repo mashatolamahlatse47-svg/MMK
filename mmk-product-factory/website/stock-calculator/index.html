@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMK Stock & Profit Calculator</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#111827,#374151);
+    color:white;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+}
+
+.logo{
+    width:70px;
+    height:70px;
+    background:white;
+    color:#111827;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+h1{
+    margin-bottom:5px;
+}
+
+.subtitle{
+    color:#d1d5db;
+    margin-bottom:25px;
+}
+
+.card{
+    background:rgba(255,255,255,.1);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    backdrop-filter:blur(10px);
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    margin-bottom:7px;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:10px;
+    box-sizing:border-box;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.calculate{
+    background:white;
+    color:#111827;
+}
+
+.reset{
+    background:#374151;
+    color:white;
+}
+
+.result{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,.2);
+}
+
+.profit{
+    font-size:22px;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+.status{
+    margin-top:15px;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+}
+
+footer{
+    text-align:center;
+    color:#9ca3af;
+    font-size:13px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">MMK</div>
+
+<h1>Stock & Profit Calculator</h1>
+<div class="subtitle">
+Calculate your stock, sales and profit instantly.
+</div>
+
+<div class="card">
+
+<label>Product Name</label>
+<input id="product" type="text" placeholder="e.g. MMK T-Shirt">
+
+<label>Cost Price</label>
+<input id="cost" type="number" placeholder="50">
+
+<label>Selling Price</label>
+<input id="selling" type="number" placeholder="99">
+
+<label>Quantity / Stock</label>
+<input id="quantity" type="number" placeholder="10">
+
+<button class="calculate" onclick="calculate()">Calculate</button>
+<button class="reset" onclick="resetCalculator()">Reset</button>
+
+</div>
+
+<div class="card">
+
+<h2>Results</h2>
+
+<div class="result">
+<span>Product</span>
+<strong id="resultProduct">—</strong>
+</div>
+
+<div class="result">
+<span>Total Cost</span>
+<strong id="totalCost">R0.00</strong>
+</div>
+
+<div class="result">
+<span>Total Sales</span>
+<strong id="totalSales">R0.00</strong>
+</div>
+
+<div class="result">
+<span>Profit Per Item</span>
+<strong id="profitPerItem">R0.00</strong>
+</div>
+
+<div class="profit">
+Total Profit:
+<span id="totalProfit">R0.00</span>
+</div>
+
+<div id="status" class="status">
+READY
+</div>
+
+</div>
+
+<footer>
+MMK • Digital Services • Products • Software
+</footer>
+
+</div>
+
+<script>
+function calculate(){
+
+    const product =
+        document.getElementById("product").value || "Unnamed Product";
+
+    const cost =
+        Number(document.getElementById("cost").value) || 0;
+
+    const selling =
+        Number(document.getElementById("selling").value) || 0;
+
+    const quantity =
+        Number(document.getElementById("quantity").value) || 0;
+
+    const totalCost = cost * quantity;
+    const totalSales = selling * quantity;
+    const profitPerItem = selling - cost;
+    const totalProfit = profitPerItem * quantity;
+
+    document.getElementById("resultProduct").textContent = product;
+    document.getElementById("totalCost").textContent =
+        "R" + totalCost.toFixed(2);
+
+    document.getElementById("totalSales").textContent =
+        "R" + totalSales.toFixed(2);
+
+    document.getElementById("profitPerItem").textContent =
+        "R" + profitPerItem.toFixed(2);
+
+    document.getElementById("totalProfit").textContent =
+        "R" + totalProfit.toFixed(2);
+
+    const status = document.getElementById("status");
+
+    if(totalProfit > 0){
+        status.textContent = "PROFIT";
+    }else if(totalProfit < 0){
+        status.textContent = "LOSS";
+    }else{
+        status.textContent = "BREAK-EVEN";
+    }
+}
+
+function resetCalculator(){
+
+    document.getElementById("product").value = "";
+    document.getElementById("cost").value = "";
+    document.getElementById("selling").value = "";
+    document.getElementById("quantity").value = "";
+
+    document.getElementById("resultProduct").textContent = "—";
+    document.getElementById("totalCost").textContent = "R0.00";
+    document.getElementById("totalSales").textContent = "R0.00";
+    document.getElementById("profitPerItem").textContent = "R0.00";
+    document.getElementById("totalProfit").textContent = "R0.00";
+    document.getElementById("status").textContent = "READY";
+}
+</script>
+
+</body>
+</html>

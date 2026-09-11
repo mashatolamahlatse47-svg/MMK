@@ -1,0 +1,14 @@
+{
+  "brand": "MMK",
+  "company": "MMK Digital Studio",
+  "version": "0.1.0",
+  "release_date": "2030-06-25",
+  "environment": "development",
+  "products": {
+    "ordering_system": true,
+    "website_system": true,
+    "kpi_system": true,
+    "digital_security_system": true,
+    "stock_profit_calculator_record": true
+  }
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "MMK-001",
+    "name": "MMK Business Starter",
+    "cost": 50,
+    "price": 99,
+    "stock": 10
+  },
+  {
+    "id": "MMK-002",
+    "name": "MMK Digital Template Pack",
+    "cost": 20,
+    "price": 49,
+    "stock": 10
+  },
+  {
+    "id": "MMK-003",
+    "name": "MMK Grocery Starter",
+    "cost": 0,
+    "price": 0,
+    "stock": 0
+  }
+]

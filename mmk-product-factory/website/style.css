@@ -1,0 +1,112 @@
+
+.contact-details {
+    max-width: 650px;
+    margin: 35px auto;
+    padding: 28px;
+    background: rgba(255,255,255,.035);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.contact-details p {
+    margin: 8px 0;
+}
+
+.contact-details strong {
+    color: var(--gold-light);
+    font-size: 1.25rem;
+}
+
+.contact-details a {
+    color: var(--gold-light);
+}
+
+.contact-details a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .contact-details {
+        padding: 22px 15px;
+        font-size: .92rem;
+    }
+}
+
+/* ===== MMK BACKGROUND COLORS ===== */
+
+body {
+    background:
+        radial-gradient(circle at 15% 15%, rgba(214,173,96,.16), transparent 30%),
+        radial-gradient(circle at 85% 70%, rgba(91,45,145,.12), transparent 30%),
+        #070707;
+}
+
+/* Hero — black + gold */
+.hero {
+    background:
+        linear-gradient(135deg, rgba(214,173,96,.18), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(255,196,70,.14), transparent 35%),
+        #090909;
+}
+
+/* About — warm charcoal */
+#about {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,.025), rgba(214,173,96,.07)),
+        #101010;
+}
+
+/* Services — deep purple */
+#services {
+    background:
+        radial-gradient(circle at 85% 20%, rgba(125,70,180,.14), transparent 30%),
+        #0b0b12;
+}
+
+/* Products — gold/black */
+#products {
+    background:
+        radial-gradient(circle at 15% 80%, rgba(214,173,96,.16), transparent 30%),
+        linear-gradient(135deg, #151109, #080808);
+}
+
+/* Software — deep blue/black */
+#software {
+    background:
+        radial-gradient(circle at 80% 50%, rgba(45,100,180,.14), transparent 35%),
+        #080c12;
+}
+
+/* Vision — dark green/black */
+#software + .section {
+    background:
+        radial-gradient(circle at 20% 40%, rgba(50,130,90,.12), transparent 30%),
+        #090d0b;
+}
+
+/* Contact — gold glow */
+.contact {
+    background:
+        radial-gradient(circle at 50% 40%, rgba(214,173,96,.20), transparent 45%),
+        linear-gradient(135deg, #161108, #080808);
+}
+
+/* Cards */
+.card {
+    background:
+        linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(10,10,10,.72);
+    backdrop-filter: blur(8px);
+}
+
+/* Contact information box */
+.contact-details {
+    background:
+        linear-gradient(145deg, rgba(214,173,96,.10), rgba(255,255,255,.025));
+}
+
+/* Stronger gold buttons */
+.primary {
+    background: linear-gradient(135deg, #f3d58d, #c89b4b);
+}
