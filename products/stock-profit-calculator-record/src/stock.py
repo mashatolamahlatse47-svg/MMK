@@ -20,7 +20,12 @@ def get_stock(product_id):
     return product[0]
 
 
+
+
 def add_stock(product_id, quantity):
+    if quantity <= 0:
+        raise ValueError("Stock quantity must be greater than zero.")
+
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
 
@@ -53,8 +58,10 @@ def add_stock(product_id, quantity):
 
     return new_quantity
 
-
 def remove_stock(product_id, quantity):
+    if quantity <= 0:
+        raise ValueError("Stock quantity must be greater than zero.")
+
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
 
@@ -90,6 +97,8 @@ def remove_stock(product_id, quantity):
     connection.close()
 
     return new_quantity
+
+
 
 
 if __name__ == "__main__":
