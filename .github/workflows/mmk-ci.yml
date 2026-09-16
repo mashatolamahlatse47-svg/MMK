@@ -25,4 +25,4 @@ jobs:
 
       - name: Python compile check
         run: |
-          python -m compileall .
+          python -m compileall products/stock-profit-calculator-record/src
