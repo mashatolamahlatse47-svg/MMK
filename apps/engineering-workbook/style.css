@@ -1,0 +1,132 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.app {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+header {
+  padding: 16px 0 24px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 0 0 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+.progress-card,
+.lesson-card,
+.principle {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.progress-card {
+  display: grid;
+  gap: 12px;
+}
+
+.progress-card span {
+  display: block;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.progress-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 20px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+#progressFill {
+  width: 0%;
+  height: 100%;
+  background: #111827;
+}
+
+.day-label {
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 13px;
+}
+
+h2 {
+  margin-top: 4px;
+}
+
+h3 {
+  margin-top: 28px;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font: inherit;
+  resize: vertical;
+}
+
+button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #111827;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.status {
+  min-height: 20px;
+  font-weight: bold;
+}
+
+.principle span {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #6b7280;
+}
+
+.principle p {
+  line-height: 1.6;
+}

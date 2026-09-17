@@ -1,0 +1,184 @@
+[
+  {
+    "day": 1,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Engineering Mindset",
+    "learn": "Think in terms of problems, causes, requirements, solutions, testing, and improvement.",
+    "exercise": [
+      "Choose one small problem you see around your home or community.",
+      "Write down exactly what the problem is.",
+      "Write three possible causes.",
+      "Write three possible solutions.",
+      "Choose one solution and explain why."
+    ],
+    "mamelodi": "Observe one practical problem in your community without trying to solve it immediately.",
+    "mmk": "Choose one MMK problem, such as stock tracking, customer orders, digital services, or clothing sales. Define the problem clearly.",
+    "reflection": "What did I learn about defining a problem before building a solution?"
+  },
+  {
+    "day": 2,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Observation",
+    "learn": "Good engineering starts with careful observation instead of assumptions.",
+    "exercise": [
+      "Observe one process for 15 minutes.",
+      "Write down each step you see.",
+      "Identify where time, money, materials, or effort are being wasted.",
+      "Separate facts from assumptions."
+    ],
+    "mamelodi": "Observe how a local shop, salon, street vendor, or service handles customers.",
+    "mmk": "Observe one MMK workflow from customer request to delivery and record every step.",
+    "reflection": "What did I notice that I normally overlook?"
+  },
+  {
+    "day": 3,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Requirements",
+    "learn": "A solution needs clear requirements before development begins.",
+    "exercise": [
+      "Choose a simple product or service.",
+      "Write five things it must do.",
+      "Write three things it must not do.",
+      "Identify who will use it.",
+      "Identify what success looks like."
+    ],
+    "mamelodi": "Think about what a useful local digital service would need to do for a small business.",
+    "mmk": "Write five requirements for the MMK Stock & Profit Calculator.",
+    "reflection": "Why are clear requirements important?"
+  },
+  {
+    "day": 4,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Specifications",
+    "learn": "Specifications turn general requirements into measurable details.",
+    "exercise": [
+      "Take yesterday's five requirements.",
+      "Turn each into a measurable specification.",
+      "Include numbers where possible.",
+      "Define what would count as passing a test."
+    ],
+    "mamelodi": "Choose a practical service and define one measurable quality standard.",
+    "mmk": "Define measurable specifications for the MMK calculator, including currency, stock quantity, selling price, cost price, revenue, and profit.",
+    "reflection": "Which requirements became clearer after adding measurements?"
+  },
+  {
+    "day": 5,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Prototype",
+    "learn": "A prototype is an early working version used to learn and discover problems.",
+    "exercise": [
+      "Choose one solution from Day 1.",
+      "Build the simplest possible version.",
+      "Do not try to make it perfect.",
+      "Test it yourself.",
+      "Write down what worked and what failed."
+    ],
+    "mamelodi": "Create a simple paper or phone-based prototype for a local problem.",
+    "mmk": "Identify one MMK feature that can be prototyped quickly.",
+    "reflection": "What did the prototype teach me?"
+  },
+  {
+    "day": 6,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Testing",
+    "learn": "Testing checks whether a solution actually works under defined conditions.",
+    "exercise": [
+      "Choose one feature or process.",
+      "Define the expected result.",
+      "Test it three times.",
+      "Record every result.",
+      "Investigate any failure."
+    ],
+    "mamelodi": "Test a simple service or process three times and record the results.",
+    "mmk": "Run a test on one MMK software feature and record expected versus actual results.",
+    "reflection": "What did testing reveal that guessing could not?"
+  },
+  {
+    "day": 7,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Quality Control",
+    "learn": "Quality means consistently meeting defined requirements and standards.",
+    "exercise": [
+      "Choose one product or service.",
+      "List five quality checks.",
+      "Perform every check.",
+      "Record failures.",
+      "Correct at least one failure."
+    ],
+    "mamelodi": "Inspect one everyday service or product and identify five quality factors.",
+    "mmk": "Create a five-point quality checklist for an MMK digital product.",
+    "reflection": "What does professional quality mean to me?"
+  },
+  {
+    "day": 8,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Documentation",
+    "learn": "Documentation makes work understandable, repeatable, maintainable, and transferable.",
+    "exercise": [
+      "Choose one task you know how to perform.",
+      "Write the steps from beginning to end.",
+      "Include tools and files needed.",
+      "Include common mistakes.",
+      "Check whether another beginner could follow it."
+    ],
+    "mamelodi": "Document a useful local process that another person could learn from.",
+    "mmk": "Document one MMK Termux workflow with commands, expected results, and testing steps.",
+    "reflection": "Could another person reproduce my work from my documentation?"
+  },
+  {
+    "day": 9,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Reliability",
+    "learn": "A professional system should behave predictably and handle normal mistakes safely.",
+    "exercise": [
+      "Choose a simple system or process.",
+      "List three things that could go wrong.",
+      "Design a response for each problem.",
+      "Test one failure condition.",
+      "Record the result."
+    ],
+    "mamelodi": "Think about what could go wrong in a local business service and how the owner could recover.",
+    "mmk": "Test an MMK application with incorrect or unexpected input and document what happens.",
+    "reflection": "How can I design systems that people can trust?"
+  },
+  {
+    "day": 10,
+    "section": "German Engineering Culture",
+    "country": "Germany",
+    "flag": "🇩🇪",
+    "title": "Engineering Project",
+    "learn": "Engineering combines problem definition, observation, requirements, specifications, prototyping, testing, quality, and documentation.",
+    "exercise": [
+      "Choose one real problem.",
+      "Define the problem.",
+      "Observe it.",
+      "Write requirements.",
+      "Create specifications.",
+      "Build a simple prototype.",
+      "Test it.",
+      "Document the results.",
+      "Identify the next improvement."
+    ],
+    "mamelodi": "Complete the project using a real small problem you can safely observe in your community.",
+    "mmk": "Apply the complete engineering cycle to one small MMK software, digital-service, clothing, gallery, or business problem.",
+    "reflection": "What engineering principle from Days 1–10 will I continue using?"
+  }
+]

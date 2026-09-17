@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMK Engineering Workbook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="container">
+
+    <header class="hero">
+      <p class="brand">MMK LEARNING SYSTEM</p>
+      <h1>Engineering Workbook</h1>
+      <p>Learn. Practice. Build. Test. Improve.</p>
+    </header>
+
+    <section class="progress-card">
+      <div class="progress-header">
+        <strong id="dayCounter">Day 1 of 120</strong>
+        <span id="progressText">0%</span>
+      </div>
+
+      <div class="progress-bar">
+        <div id="progressFill"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="section-label">TODAY'S LESSON</p>
+      <h2 id="lessonTitle">Loading lesson...</h2>
+      <p id="lessonLearn">Loading...</p>
+    </section>
+
+    <section class="card">
+      <h2>Today's Exercise</h2>
+      <ol id="exerciseList"></ol>
+    </section>
+
+    <section class="card">
+      <h2>Mamelodi Practical Exercise</h2>
+      <p id="mamelodiExercise">Loading...</p>
+    </section>
+
+    <section class="card">
+      <h2>MMK Application</h2>
+      <p id="mmkExercise">Loading...</p>
+    </section>
+
+    <section class="card">
+      <h2>Reflection</h2>
+      <p id="reflection">Loading...</p>
+    </section>
+
+    <section class="card">
+      <h2>Your Notes</h2>
+
+      <textarea
+        id="notes"
+        rows="8"
+        placeholder="Write what you learned, observed, tested, or discovered..."
+      ></textarea>
+
+      <div class="navigation">
+        <button id="previousButton" type="button">← Previous Day</button>
+        <button id="nextButton" type="button">Next Day →</button>
+      </div>
+
+      <button id="completeButton" type="button">
+        Complete Day 1
+      </button>
+
+      <p id="status">Day 1 is in progress.</p>
+    </section>
+
+    <section class="engineering-loop">
+      <strong>Engineering Loop</strong>
+      <p>Problem → Observe → Requirements → Specification → Prototype → Test → Improve → Document</p>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
