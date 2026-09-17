@@ -16,13 +16,45 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: MMK Security Gate
+        run: |
+          chmod +x scripts/security-check.sh
+          ./scripts/security-check.sh
+
       - name: Show environment
         run: |
           echo "MMK CI started"
           git --version
           python --version
           node --version
+          ruby --version
 
       - name: Python compile check
         run: |
-          python -m compileall products/stock-profit-calculator-record/src
+          python -m compileall automation products scripts tests
+
+      - name: Node.js test
+        run: |
+          node mmk-product-factory/website/script.js
+
+      - name: Shell syntax check
+        run: |
+          find automation scripts -type f -name "*.sh" -print0 |
+          xargs -0 -r -n1 bash -n
+
+      - name: Repository check
+        run: |
+          test -d mmk-product-factory
+          test -d products
+          test -d automation
+          echo "MMK repository structure OK"
+
+      - name: CI success
+        run: |
+          echo "================================"
+          echo "MMK CI PASSED"
+          echo "Python: OK"
+          echo "Node.js: OK"
+          echo "Shell: OK"
+          echo "Repository: OK"
+          echo "================================"

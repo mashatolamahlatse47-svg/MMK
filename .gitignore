@@ -45,3 +45,6 @@ backups/
 # MMK Product Vault
 private/mmk-vault/
 protected-products/
+
+# MMK step/recovery backups
+*.step*-backup
