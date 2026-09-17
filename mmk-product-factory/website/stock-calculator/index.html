@@ -113,6 +113,7 @@ footer{
     font-size:13px;
     margin-top:20px;
 }
+
 </style>
 </head>
 
@@ -127,22 +128,46 @@ footer{
 Calculate your stock, sales and profit instantly.
 </div>
 
-<div class="card">
+<form id="calculatorForm" class="card">
 
 <label>Product Name</label>
-<input id="product" type="text" placeholder="e.g. MMK T-Shirt">
+<input id="productName" type="text" placeholder="e.g. MMK T-Shirt">
 
 <label>Cost Price</label>
-<input id="cost" type="number" placeholder="50">
+<input id="costPrice" type="number" placeholder="50">
 
 <label>Selling Price</label>
-<input id="selling" type="number" placeholder="99">
+<input id="sellingPrice" type="number" placeholder="99">
 
 <label>Quantity / Stock</label>
 <input id="quantity" type="number" placeholder="10">
 
-<button class="calculate" onclick="calculate()">Calculate</button>
-<button class="reset" onclick="resetCalculator()">Reset</button>
+<button class="calculate" type="submit">Calculate</button>
+<button class="reset" type="reset">Reset</button>
+
+</form>
+
+<div class="card">
+
+<h2>Stock Management</h2>
+
+<form id="stockForm">
+
+<label>Product Name</label>
+<input id="stockProductName" type="text" placeholder="e.g. MMK T-Shirt" required>
+
+<label>Cost Price</label>
+<input id="stockCostPrice" type="number" min="0" step="0.01" placeholder="50" required>
+
+<label>Selling Price</label>
+<input id="stockSellingPrice" type="number" min="0" step="0.01" placeholder="99" required>
+
+<label>Quantity / Stock</label>
+<input id="stockQuantity" type="number" min="0" step="1" placeholder="10" required>
+
+<button class="calculate" type="submit">Add to Stock</button>
+
+</form>
 
 </div>
 
@@ -181,71 +206,58 @@ READY
 
 </div>
 
+<div class="card">
+
+<h2>Stock Records</h2>
+
+<div class="result">
+<span>Total Products</span>
+<strong id="recordCount">0</strong>
+</div>
+
+<div class="result">
+<span>Total Stock</span>
+<strong id="totalStock">0</strong>
+</div>
+
+<div class="result">
+<span>Stock Value</span>
+<strong id="stockValue">R0.00</strong>
+</div>
+
+<div style="overflow-x:auto; margin-top:20px;">
+
+<table style="width:100%; border-collapse:collapse;">
+
+<thead>
+<tr>
+<th style="text-align:left; padding:8px;">Product</th>
+<th style="padding:8px;">Cost</th>
+<th style="padding:8px;">Price</th>
+<th style="padding:8px;">Stock</th>
+<th style="padding:8px;">Profit</th>
+</tr>
+</thead>
+
+<tbody id="stockTableBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
 <footer>
 MMK • Digital Services • Products • Software
 </footer>
 
 </div>
 
-<script>
-function calculate(){
-
-    const product =
-        document.getElementById("product").value || "Unnamed Product";
-
-    const cost =
-        Number(document.getElementById("cost").value) || 0;
-
-    const selling =
-        Number(document.getElementById("selling").value) || 0;
-
-    const quantity =
-        Number(document.getElementById("quantity").value) || 0;
-
-    const totalCost = cost * quantity;
-    const totalSales = selling * quantity;
-    const profitPerItem = selling - cost;
-    const totalProfit = profitPerItem * quantity;
-
-    document.getElementById("resultProduct").textContent = product;
-    document.getElementById("totalCost").textContent =
-        "R" + totalCost.toFixed(2);
-
-    document.getElementById("totalSales").textContent =
-        "R" + totalSales.toFixed(2);
-
-    document.getElementById("profitPerItem").textContent =
-        "R" + profitPerItem.toFixed(2);
-
-    document.getElementById("totalProfit").textContent =
-        "R" + totalProfit.toFixed(2);
-
-    const status = document.getElementById("status");
-
-    if(totalProfit > 0){
-        status.textContent = "PROFIT";
-    }else if(totalProfit < 0){
-        status.textContent = "LOSS";
-    }else{
-        status.textContent = "BREAK-EVEN";
-    }
-}
-
-function resetCalculator(){
-
-    document.getElementById("product").value = "";
-    document.getElementById("cost").value = "";
-    document.getElementById("selling").value = "";
-    document.getElementById("quantity").value = "";
-
-    document.getElementById("resultProduct").textContent = "—";
-    document.getElementById("totalCost").textContent = "R0.00";
-    document.getElementById("totalSales").textContent = "R0.00";
-    document.getElementById("profitPerItem").textContent = "R0.00";
-    document.getElementById("totalProfit").textContent = "R0.00";
-    document.getElementById("status").textContent = "READY";
-}
-</script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="stock.js"></script>
 
 </body>
 </html>
+
+ 

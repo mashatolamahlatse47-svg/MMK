@@ -1,4 +1,4 @@
-const MMK_CONFIG = {
+window.MMK_CONFIG = {
   businessName: "MMK",
   appName: "Stock & Profit Calculator",
   currency: "R",
