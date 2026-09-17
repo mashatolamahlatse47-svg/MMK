@@ -41,3 +41,7 @@ __pycache__/
 backups/
 *.backup
 *.backup-*
+
+# MMK Product Vault
+private/mmk-vault/
+protected-products/
