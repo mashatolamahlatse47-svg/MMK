@@ -36,3 +36,8 @@ __pycache__/
 
 # MMK local databases
 *.db
+
+# Local recovery backups
+backups/
+*.backup
+*.backup-*
