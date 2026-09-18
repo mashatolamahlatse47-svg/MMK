@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMK Security O.B. — Record Occurrence</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>MMK Security O.B.</h1>
+    <p>Record Occurrence — Prototype v0.1.0</p>
+
+    <form id="occurrenceForm">
+      <label>Occurrence Number
+        <input id="occurrenceNumber" required>
+      </label>
+
+      <label>Date
+        <input id="occurrenceDate" type="date" required>
+      </label>
+
+      <label>Time
+        <input id="occurrenceTime" type="time" required>
+      </label>
+
+      <label>Location
+        <input id="location" required>
+      </label>
+
+      <label>Occurrence Type
+        <select id="occurrenceType" required>
+          <option value="">Select type</option>
+          <option>Theft</option>
+          <option>Incident</option>
+          <option>Accident</option>
+          <option>Access Control</option>
+          <option>Suspicious Activity</option>
+          <option>Maintenance</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <label>Description
+        <textarea id="description" rows="5" required></textarea>
+      </label>
+
+      <label>Person Involved
+        <input id="personInvolved">
+      </label>
+
+      <label>Security Officer
+        <input id="officer" required>
+      </label>
+
+      <label>Action Taken
+        <textarea id="actionTaken" rows="4" required></textarea>
+      </label>
+
+      <label>Status
+        <select id="status" required>
+          <option>Open</option>
+          <option>Under Review</option>
+          <option>Resolved</option>
+          <option>Closed</option>
+        </select>
+      </label>
+
+      <button type="submit">Save Occurrence</button>
+    </form>
+
+    <section id="result" aria-live="polite"></section>
+  </main>
+
+  <script src="ob-validation.js"></script>
+    <script src="ob-record.js"></script>
+</body>
+</html>

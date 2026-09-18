@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMK Security Occurrence Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="topbar">
+        <div>
+            <div class="brand">MMK</div>
+            <div class="product">Security Occurrence Book</div>
+        </div>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            Prototype v0.1.0
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <nav>
+                <button class="nav-item active" data-section="dashboard">Dashboard</button>
+                <button class="nav-item" data-section="occurrences">Occurrences</button>
+                <button class="nav-item" data-section="incidents">Incidents</button>
+                <button class="nav-item" data-section="shifts">Shifts</button>
+                <button class="nav-item" data-section="handovers">Handovers</button>
+                <button class="nav-item" data-section="reports">Reports</button>
+            </nav>
+
+            <div class="site-box">
+                <small>ACTIVE SITE</small>
+                <strong>MMK Development Site</strong>
+                <span>South Africa</span>
+            </div>
+        </aside>
+
+        <main class="main">
+
+            <section class="page-heading">
+                <div>
+                    <p class="eyebrow">SECURITY MANAGEMENT</p>
+                    <h1>Dashboard</h1>
+                    <p class="muted">Security activity overview for the active site.</p>
+                </div>
+
+                <button class="primary-button" id="recordButton">
+                    + Record Occurrence
+                </button>
+            </section>
+
+            <section class="cards">
+
+                <div class="card">
+                    <span class="card-label">TODAY'S OCCURRENCES</span>
+                    <strong class="card-number">0</strong>
+                    <span class="card-note">No records yet</span>
+                </div>
+
+                <div class="card">
+                    <span class="card-label">OPEN INCIDENTS</span>
+                    <strong class="card-number">0</strong>
+                    <span class="card-note">No open incidents</span>
+                </div>
+
+                <div class="card">
+                    <span class="card-label">ACTIVE SHIFTS</span>
+                    <strong class="card-number">0</strong>
+                    <span class="card-note">No active shifts</span>
+                </div>
+
+                <div class="card">
+                    <span class="card-label">PENDING HANDOVERS</span>
+                    <strong class="card-number">0</strong>
+                    <span class="card-note">No pending handovers</span>
+                </div>
+
+            </section>
+
+            <section class="content-grid">
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">OCCURRENCE BOOK</p>
+                            <h2>Recent Occurrences</h2>
+                        </div>
+                        <button class="text-button">View all</button>
+                    </div>
+
+                    <div class="empty-state">
+                        <div class="empty-icon">+</div>
+                        <h3>No occurrences recorded</h3>
+                        <p>The occurrence book is currently empty.</p>
+                        <button class="secondary-button" id="emptyRecordButton">
+                            Record First Occurrence
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">QUICK ACTIONS</p>
+                            <h2>Security Tasks</h2>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="action-button">Record Occurrence</button>
+                        <button class="action-button">Report Incident</button>
+                        <button class="action-button">Start Shift</button>
+                        <button class="action-button">Create Handover</button>
+                    </div>
+                </div>
+
+            </section>
+
+            <footer>
+                <span>MMK Security Occurrence Book</span>
+                <span>Prototype • Development Mode</span>
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
