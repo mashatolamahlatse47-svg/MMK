@@ -22,11 +22,7 @@ form.addEventListener("submit", function (event) {
   let records = [];
 
   try {
-    records = sanitizeStoredRecords(
-      JSON.parse(
-        localStorage.getItem("mmk_ob_occurrences") || "[]"
-      )
-    );
+    records = getStoredOccurrences();
   } catch (error) {
     result.textContent =
       "Stored occurrence data is invalid. No record was saved.";
@@ -51,15 +47,8 @@ form.addEventListener("submit", function (event) {
 
   records.push(protectedOccurrence);
 
-  localStorage.setItem(
-    "mmk_ob_occurrences",
-    JSON.stringify(records)
-  );
-
-  localStorage.setItem(
-    "mmk_ob_last_occurrence",
-    JSON.stringify(protectedOccurrence)
-  );
+  saveStoredOccurrences(records);
+  saveLastOccurrence(protectedOccurrence);
 
   result.textContent =
     "Occurrence " +
@@ -76,9 +65,7 @@ console.log("MMK O.B. RECORD OCCURRENCE v0.1.0: PASS");
 
 
 function renderOccurrences() {
-  const records = JSON.parse(
-    localStorage.getItem("mmk_ob_occurrences") || "[]"
-  );
+  const records = getStoredOccurrences();
 
   let history = document.getElementById("occurrenceHistory");
 
@@ -120,16 +107,11 @@ function renderOccurrences() {
 
   history.querySelectorAll("button[data-index]").forEach(function (button) {
     button.addEventListener("click", function () {
-      const records = JSON.parse(
-        localStorage.getItem("mmk_ob_occurrences") || "[]"
-      );
+      const records = getStoredOccurrences();
 
       records.splice(Number(button.dataset.index), 1);
 
-      localStorage.setItem(
-        "mmk_ob_occurrences",
-        JSON.stringify(records)
-      );
+      saveStoredOccurrences(records);
 
       renderOccurrences();
     });
@@ -138,9 +120,7 @@ function renderOccurrences() {
 
 
 function filterOccurrences() {
-  const records = JSON.parse(
-    localStorage.getItem("mmk_ob_occurrences") || "[]"
-  );
+  const records = getStoredOccurrences();
 
   const search = (
     document.getElementById("obSearch")?.value || ""
@@ -261,9 +241,7 @@ function escapeHtml(value) {
 renderOccurrences();
 
 function renderDashboard() {
-  const records = JSON.parse(
-    localStorage.getItem("mmk_ob_occurrences") || "[]"
-  );
+  const records = getStoredOccurrences();
 
   let dashboard = document.getElementById("obDashboard");
 
@@ -326,9 +304,7 @@ renderOccurrences = function () {
 renderDashboard();
 
 function exportOccurrences() {
-  const records = JSON.parse(
-    localStorage.getItem("mmk_ob_occurrences") || "[]"
-  );
+  const records = getStoredOccurrences();
 
   if (records.length === 0) {
     result.textContent = "No occurrences available for export.";
