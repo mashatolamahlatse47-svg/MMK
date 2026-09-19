@@ -5,26 +5,26 @@
 ### Task 1
 Name: Improve MMK Daily Work Planner
 Priority: 1
-Status: ACTIVE
+Status: COMPLETED
 Area: Automation
-Next: Connect task queue to daily planner
+Next: Maintain planner
 Test: Planner selects active task
 
 ### Task 2
 Name: Connect Project State
 Priority: 2
-Status: NEXT
+Status: COMPLETED
 Area: Automation
-Next: Read project state automatically
+Next: Maintain project state
 Test: State appears in TODAY.md
 
 ### Task 3
 Name: Daily Checkpoint System
 Priority: 3
-Status: NEXT
+Status: ACTIVE
 Area: Automation
-Next: Record completed work
-Test: Checkpoint can be saved
+Next: Build reliable completion recording
+Test: Completed task can be recorded
 
 ### Task 4
 Name: Weekly Review System

@@ -6,7 +6,7 @@ MMK Daily Work Planning + Automation
 
 ## Version
 
-v1.1
+v1.3
 
 ## Current Objective
 
@@ -14,7 +14,7 @@ Build a reliable daily work-planning system connected to the real MMK repository
 
 ## Current Task
 
-Connect the task queue to the daily planner.
+Build reliable completion recording for the daily checkpoint system.
 
 ## Priority
 
@@ -26,6 +26,8 @@ Connect the task queue to the daily planner.
 - Project-state integration
 - Automatic ACTIVE task selection
 - Git-state reporting
+- Daily checkpoint generation
+- Focused v1.2 commit and GitHub push
 
 ## Required Tests
 
@@ -52,7 +54,7 @@ Push the focused commit to GitHub after testing.
 
 ## Next Task
 
-Build the daily checkpoint system.
+Build reliable completion recording.
 
 ## Blocker
 
