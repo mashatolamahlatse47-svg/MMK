@@ -1,0 +1,38 @@
+name: MMK O.B. Security CI
+
+on:
+  push:
+    paths:
+      - "prototypes/security/**"
+      - ".github/workflows/mmk-ob-security.yml"
+  pull_request:
+    paths:
+      - "prototypes/security/**"
+      - ".github/workflows/mmk-ob-security.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout MMK
+        uses: actions/checkout@v4
+
+      - name: Check O.B. files
+        run: |
+          test -s prototypes/security/ob-record.html
+          test -s prototypes/security/ob-record.js
+          test -s prototypes/security/style.css
+          test -s prototypes/security/config.js
+
+      - name: JavaScript syntax check
+        run: |
+          node --check prototypes/security/ob-record.js
+
+      - name: Basic security checks
+        run: |
+          ! grep -RniE 'password[[:space:]]*=[[:space:]]*["'\''][^"'\'']+["'\'']|api[_-]?key[[:space:]]*=[[:space:]]*["'\''][^"'\'']+["'\'']' prototypes/security \
+            --exclude='*.md'
+
+      - name: CI result
+        run: echo "MMK O.B. SECURITY CI: PASS"

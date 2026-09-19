@@ -1,0 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: #ffffff;
+}
+
+.app {
+  width: 100%;
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header p {
+  margin: 5px 0 0;
+  color: #9ca3af;
+}
+
+.card {
+  background: #1f2937;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin: 15px 0 7px;
+  color: #d1d5db;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  background: #111827;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #ffffff;
+}
+
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px;
+  border: 0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 0;
+  border-bottom: 1px solid #374151;
+}
+
+.result-row span {
+  color: #9ca3af;
+}
+
+.result-row strong {
+  text-align: right;
+}
+
+.profit-box {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 15px;
+  background: #111827;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profit-box strong {
+  font-size: 22px;
+}
+
+.status {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.profit {
+  background: #064e3b;
+}
+
+.loss {
+  background: #7f1d1d;
+}
+
+.break-even {
+  background: #374151;
+}
+
+footer {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  padding: 10px;
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+}

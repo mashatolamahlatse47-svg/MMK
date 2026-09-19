@@ -1,0 +1,26 @@
+MMK Stock & Profit Calculator
+Version: 1.0.0
+Release Status: FINAL
+Release Date: 2026-09-19
+
+Product Type:
+Standalone offline browser application
+
+Core Features:
+- Stock management
+- Product cost and selling price tracking
+- Stock selling and restocking
+- Profit calculation
+- Sales recording
+- Sales history
+- Revenue tracking
+- Offline data storage
+- Data export backup
+- Data restore
+- Browser-based operation
+
+Currency:
+South African Rand (R)
+
+Publisher:
+MMK

@@ -25,5 +25,15 @@
         "price": 0,
         "currency": "ZAR",
         "available": true
+    },
+    {
+        "id": "MMK-004",
+        "name": "MMK Stock & Profit Calculator",
+        "category": "Software",
+        "description": "A reusable business tool for calculating product costs, selling prices, stock, sales and profit.",
+        "price": 0,
+        "currency": "ZAR",
+        "available": true,
+        "link": "../stock-calculator/index.html"
     }
 ]
