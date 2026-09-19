@@ -49,3 +49,5 @@ protected-products/
 # MMK step/recovery backups
 *.step*-backup
 private/checkpoint-security/credentials.json
+
+*.db.test-validation
