@@ -6,7 +6,7 @@ MMK Daily Work Planning + Automation
 
 ## Version
 
-v1.0
+v1.1
 
 ## Current Objective
 
@@ -14,17 +14,26 @@ Build a reliable daily work-planning system connected to the real MMK repository
 
 ## Current Task
 
-Finish and test the MMK Daily Work Planner.
+Connect the task queue to the daily planner.
 
 ## Priority
 
 1
 
+## Completed
+
+- Daily planner foundation
+- Project-state integration
+- Automatic ACTIVE task selection
+- Git-state reporting
+
 ## Required Tests
 
 - Python syntax check
+- Task queue parsing
+- ACTIVE task selection
 - Daily planner generation
-- TODAY.md date check
+- TODAY.md verification
 - Git status check
 
 ## Save Requirement
@@ -43,7 +52,7 @@ Push the focused commit to GitHub after testing.
 
 ## Next Task
 
-Connect the daily planner to this project-state file.
+Build the daily checkpoint system.
 
 ## Blocker
 

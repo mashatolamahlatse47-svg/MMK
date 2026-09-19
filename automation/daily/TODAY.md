@@ -1,7 +1,7 @@
 # MMK DAILY WORK PLAN
 
 Date: 2026-09-19
-Generated: 11:09
+Generated: 11:20
 
 ## ACTIVE PROJECT STATE
 
@@ -13,7 +13,7 @@ MMK Daily Work Planning + Automation
 
 ## Version
 
-v1.0
+v1.1
 
 ## Current Objective
 
@@ -21,17 +21,26 @@ Build a reliable daily work-planning system connected to the real MMK repository
 
 ## Current Task
 
-Finish and test the MMK Daily Work Planner.
+Connect the task queue to the daily planner.
 
 ## Priority
 
 1
 
+## Completed
+
+- Daily planner foundation
+- Project-state integration
+- Automatic ACTIVE task selection
+- Git-state reporting
+
 ## Required Tests
 
 - Python syntax check
+- Task queue parsing
+- ACTIVE task selection
 - Daily planner generation
-- TODAY.md date check
+- TODAY.md verification
 - Git status check
 
 ## Save Requirement
@@ -50,7 +59,7 @@ Push the focused commit to GitHub after testing.
 
 ## Next Task
 
-Connect the daily planner to this project-state file.
+Build the daily checkpoint system.
 
 ## Blocker
 
@@ -63,14 +72,24 @@ None currently identified.
 - New unrelated products
 - Major business-system expansion
 
+## SELECTED TASK
+
+### Improve MMK Daily Work Planner
+
+Priority: 1
+Area: Automation
+Next action: Connect task queue to daily planner
+Required test: Planner selects active task
+
 ## GIT STATE
 
 Branch: main
 
-Latest commit: d62ab01 Harden O.B. storage integrity
+Latest commit: a5e05a7 Build MMK daily work planner
 
 Current changes:
 
+ M automation/daily/PROJECT-STATE.md
  M automation/daily/TODAY.md
  M automation/daily/generate_today.py
  M mmk-product-factory/data/products.json
@@ -78,12 +97,12 @@ Current changes:
 ?? .github/workflows/mmk-ci-before-product-check.yml
 ?? .github/workflows/mmk-ob-security.yml
 ?? ai-tools/
-?? automation/daily/DAILY-CONFIG.md
-?? automation/daily/PROJECT-STATE.md
+?? automation/daily/TASK-QUEUE.md
 ?? automation/daily/TODAY.md.before-v1
 ?? automation/daily/generate_today.py.before-replace
 ?? automation/daily/generate_today.py.before-v1
 ?? automation/daily/generate_today.py.v1-backup
+?? automation/daily/generate_today.py.v1.1-backup
 ?? automation/logs/
 ?? devops-lab/
 ?? digital-products/mmk-business-starter/
@@ -93,9 +112,8 @@ Current changes:
 
 ## TODAY
 
-- [ ] Review active project
-- [ ] Complete current task
-- [ ] Run required tests
+- [ ] Complete the selected task
+- [ ] Run the required test
 - [ ] Save and document the result
 - [ ] Create focused Git commit
 - [ ] Push completed commit to GitHub
