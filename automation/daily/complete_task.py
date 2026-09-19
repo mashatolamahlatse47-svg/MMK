@@ -10,6 +10,7 @@ queue_file = daily / "TASK-QUEUE.md"
 state_file = daily / "PROJECT-STATE.md"
 today_file = daily / "TODAY.md"
 checkpoint_file = daily / "CHECKPOINT.md"
+history_dir = daily / "history"
 planner_file = daily / "generate_today.py"
 
 
@@ -125,6 +126,11 @@ Build weekly review system.
 
 checkpoint_file.write_text(checkpoint)
 
+# Archive the completed checkpoint for weekly review history.
+history_dir.mkdir(parents=True, exist_ok=True)
+history_file = history_dir / f"{now:%Y-%m-%d-%H%M}.md"
+history_file.write_text(checkpoint)
+
 print("================================")
 print("MMK TASK COMPLETION RECORDER v1.5")
 print("================================")
@@ -132,4 +138,6 @@ print("COMPLETED:", task_name)
 print("TASK QUEUE: UPDATED")
 print("PROJECT STATE: UPDATED")
 print("CHECKPOINT: SAVED")
+print("HISTORY: ARCHIVED")
+print("ARCHIVE:", history_file)
 print("================================")
