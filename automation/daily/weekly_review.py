@@ -37,7 +37,10 @@ if history_dir.exists():
         try:
             record_date = datetime.strptime(file.stem, "%Y-%m-%d")
         except ValueError:
-            continue
+            try:
+                record_date = datetime.strptime(file.stem, "%Y-%m-%d-%H%M")
+            except ValueError:
+                continue
 
         if week_start.date() <= record_date.date() <= today.date():
             text = file.read_text()
