@@ -21,7 +21,7 @@ Test: State appears in TODAY.md
 ### Task 3
 Name: Daily Checkpoint System
 Priority: 3
-Status: ACTIVE
+Status: COMPLETED
 Area: Automation
 Next: Build reliable completion recording
 Test: Completed task can be recorded
@@ -29,7 +29,7 @@ Test: Completed task can be recorded
 ### Task 4
 Name: Weekly Review System
 Priority: 4
-Status: WAITING
+Status: ACTIVE
 Area: Automation
 Next: Generate weekly summary
 Test: Weekly summary generated

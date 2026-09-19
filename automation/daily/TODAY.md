@@ -1,7 +1,7 @@
 # MMK DAILY WORK PLAN
 
 Date: 2026-09-19
-Generated: 11:42
+Generated: 12:13
 
 ## ACTIVE PROJECT STATE
 
@@ -13,7 +13,7 @@ MMK Daily Work Planning + Automation
 
 ## Version
 
-v1.3
+v1.5
 
 ## Current Objective
 
@@ -21,7 +21,7 @@ Build a reliable daily work-planning system connected to the real MMK repository
 
 ## Current Task
 
-Build reliable completion recording for the daily checkpoint system.
+Maintain daily completion recording and task-state synchronization.
 
 ## Priority
 
@@ -61,7 +61,7 @@ Push the focused commit to GitHub after testing.
 
 ## Next Task
 
-Build reliable completion recording.
+Build weekly review system.
 
 ## Blocker
 
@@ -76,21 +76,22 @@ None currently identified.
 
 ## SELECTED TASK
 
-### Daily Checkpoint System
+### Weekly Review System
 
-Priority: 3
+Priority: 4
 Area: Automation
-Next action: Build reliable completion recording
-Required test: Completed task can be recorded
+Next action: Generate weekly summary
+Required test: Weekly summary generated
 
 ## GIT STATE
 
 Branch: main
 
-Latest commit: 558628b Add MMK daily checkpoint system
+Latest commit: 883d980 Improve MMK checkpoint recording
 
 Current changes:
 
+ M automation/daily/CHECKPOINT.md
  M automation/daily/PROJECT-STATE.md
  M automation/daily/TASK-QUEUE.md
  M automation/daily/TODAY.md
@@ -100,6 +101,7 @@ Current changes:
 ?? .github/workflows/mmk-ob-security.yml
 ?? ai-tools/
 ?? automation/daily/TODAY.md.before-v1
+?? automation/daily/complete_task.py
 ?? automation/daily/generate_today.py.before-replace
 ?? automation/daily/generate_today.py.before-v1
 ?? automation/daily/generate_today.py.v1-backup
