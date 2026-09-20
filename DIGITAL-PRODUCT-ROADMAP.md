@@ -49,3 +49,8 @@ Sell:
 MMK GOAL:
 
 Create once → improve → reuse → package → sell → automate.
+
+## PHASE 6 — FUTURE PROJECTS
+
+21. MMK Education OS
+
