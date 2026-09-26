@@ -1,0 +1,136 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f5f7;
+  color: #202124;
+}
+
+.topbar {
+  background: #111827;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+
+.topbar p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.status {
+  background: #f59e0b;
+  color: #111827;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.card,
+.panel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.card span,
+.card small {
+  display: block;
+  color: #6b7280;
+}
+
+.card strong {
+  display: block;
+  font-size: 25px;
+  margin: 8px 0;
+}
+
+.menu {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 18px 0;
+}
+
+.menu button {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+
+.menu button.active {
+  background: #111827;
+  color: white;
+}
+
+.panel {
+  margin-bottom: 16px;
+}
+
+.rows div {
+  display: flex;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.rows div:last-child {
+  border-bottom: 0;
+}
+
+.muted {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 430px) {
+  .container {
+    padding: 12px;
+  }
+
+  .dashboard {
+    gap: 8px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .card strong {
+    font-size: 20px;
+  }
+}

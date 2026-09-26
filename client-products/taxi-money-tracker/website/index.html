@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMK Taxi Money & Profit Tracker</title>
+</head>
+<body>
+<h1>MMK Taxi Money & Profit Tracker</h1>
+<main>
+<section id="work-day">
+<h2>Work Day</h2>
+<p>Track taxi money from first load to Daily Close.</p>
+</section>
+<section id="record-load">
+<h2>Record Load</h2>
+<label>Route</label>
+<select id="route"><option value="local">Local - R17</option><option value="cbd">CBD - R28</option></select>
+<label>Passengers</label>
+<input id="passengers" type="number" min="1" value="1">
+<button id="add-load">Add Load</button>
+<p>Load Income: <strong id="load-income">R0.00</strong></p>
+</section>
+<section id="today-loads">
+<h2>Today’s Loads</h2>
+<div id="load-list"></div>
+</section>
+<section id="daily-summary">
+<h2>Daily Summary</h2>
+<p>Gross Income: <strong id="gross-income">R0.00</strong></p>
+<p>Passengers: <strong id="total-passengers">0</strong></p>
+<p>Loads: <strong id="total-loads">0</strong></p>
+</section>
+</main>
+<section id="money-setup">
+<h2>Daily Money Setup</h2>
+<label>Vehicle</label>
+<input id="vehicle" type="text" placeholder="Taxi 01">
+<label>Driver</label>
+<input id="driver" type="text" placeholder="Driver name">
+<label>Owner Daily Target (R)</label>
+<input id="owner-target" type="number" min="0" step="0.01" value="1200">
+<label>Maintenance Reserve / km (R)</label>
+<input id="reserve-per-km" type="number" min="0" step="0.01" value="1.50">
+<label>Starting Odometer (km)</label>
+<input id="start-odometer" type="number" min="0" step="1">
+<button id="save-setup">Save Daily Setup</button>
+<p id="setup-status"></p>
+</section>
+<script src="fare-config.js"></script>
+<script src="calculator.js"></script>
+<script src="app.js"></script>
+<script src="setup.js"></script>
+</body>
+</html>
+

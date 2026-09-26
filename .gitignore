@@ -1,53 +1,116 @@
-# Secrets
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment / secrets
 .env
 .env.*
 !.env.example
-*.key
 *.pem
-*.p12
-*.pfx
-secrets/
-private/
-credentials/
+*.key
 
-# Personal/legal information
-private-legal/
-legal-private/
-personal-data/
-id-documents/
+# Caches
+.cache/
+.cache-*/
+*.tmp
+*.temp
 
-# Local Termux files
-.termux/
-*.log
-
-# OS/editor files
+# OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
 
-# MMK local backups
-BACKUPS/
-mmk-product-factory/BACKUPS/
+# Logs
+*.log
 
-# Python cache files
-__pycache__/
-*.py[cod]
+# Build/output
+dist/
+build/
+coverage/
+.eggs/
+*.egg-info/
 
-# MMK local databases
-*.db
-
-# Local recovery backups
-backups/
+# Backups
 *.backup
-*.backup-*
+*.bak
+*.old
 
-# MMK Product Vault
-private/mmk-vault/
-protected-products/
+# MMK private / protected material
+private/**
+protected-products/**
 
-# MMK step/recovery backups
+# MMK databases / local runtime data
+**/data/*.db
+**/data/*.db-*
+**/data/*.sqlite
+**/data/*.sqlite3
+
+# MMK backup archives / Git metadata backups
+BACKUPS/**/config
+BACKUPS/**/HEAD
+BACKUPS/**/index
+BACKUPS/**/ORIG_HEAD
+BACKUPS/**/COMMIT_EDITMSG
+
+# Development backup copies
 *.step*-backup
-private/checkpoint-security/credentials.json
+*.b*-backup
+*.v*-backup
 
-*.db.test-validation
+# Security database runtime data
+software/security/database/data/**
+
+# MMK backup collections - preserved locally, not committed
+/BACKUPS/
+/backups/
+
+# Database files - local/runtime data
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Compressed backup archives
+*.tar.gz
+*.zip
+
+# Nested MMK backup folders
+**/BACKUPS/
+**/backups/
+
+# Development checkpoint copies
+*.before-*
+*.checkpoint*-backup
+
+# Product development snapshots
+*.before-package
+
+# Specific preserved product backup
+products/local-services-coordinator/website/index.v0.2-backup.html
+
+# Legacy security protections
+*.p12
+*.pfx
+secrets/
+private/
+credentials/
+private-legal/
+legal-private/
+personal-data/
+id-documents/
+.termux/
+
+# MMK protected product material
+protected-products/

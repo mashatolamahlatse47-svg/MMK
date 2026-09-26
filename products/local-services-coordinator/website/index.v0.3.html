@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMK Coordinator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f5f7;color:#171717}
+header{background:#111;color:white;padding:22px}
+header h1{margin:0 0 6px}
+header p{margin:0;color:#bbb}
+main{max-width:1100px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px #0001}
+.stat{font-size:28px;font-weight:bold}
+label{display:block;font-weight:bold;margin-top:12px}
+input,select,textarea,button{width:100%;padding:11px;margin-top:6px;border:1px solid #ccc;border-radius:8px;font:inherit}
+textarea{min-height:90px}
+button{background:#111;color:white;cursor:pointer}
+button:hover{opacity:.9}
+.request{border-left:5px solid #111;margin-top:12px}
+small{color:#666}
+.status{font-weight:bold}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:600px){.actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>MMK COORDINATOR</h1>
+<p>Local Services Coordination System — V0.1.0</p>
+</header>
+
+<main>
+<section class="grid">
+<div class="card"><small>REQUESTS</small><div class="stat" id="total">0</div></div>
+<div class="card"><small>OPEN</small><div class="stat" id="open">0</div></div>
+<div class="card"><small>COMPLETED</small><div class="stat" id="completed">0</div></div>
+</section>
+
+<br>
+
+<section class="grid">
+<div class="card">
+<h2>New Service Request</h2>
+
+<form id="requestForm">
+<label>Customer Name
+<input id="customer" required>
+</label>
+
+<label>Phone
+<input id="phone" required>
+</label>
+
+<label>Service
+<select id="service" required>
+<option value="">Select service</option>
+<option>Nanny</option>
+<option>Cleaning</option>
+<option>Maintenance</option>
+<option>Delivery</option>
+<option>Security Services</option>
+<option>Other Local Services</option>
+</select>
+</label>
+
+<label>Location
+<input id="location" required>
+</label>
+
+<label>Preferred Date & Time
+<input id="datetime" type="datetime-local">
+</label>
+
+<label>Payment Status
+<select id="payment">
+<option>Cash</option>
+<option>Pay later</option>
+<option>Deposit</option>
+<option>Finish later</option>
+</select>
+</label>
+
+<label>Request Details
+<textarea id="details" placeholder="What does the customer need?"></textarea>
+</label>
+
+<br>
+<button type="submit">Create Request</button>
+</form>
+</div>
+
+<div class="card">
+<h2>Request Board</h2>
+<div id="requests"></div>
+</div>
+</section>
+</main>
+
+<script>
+const STORAGE_KEY = "mmk_coordinator_requests_v1";
+
+const statuses = [
+  "NEW REQUEST",
+  "REVIEWING",
+  "FINDING PROVIDER",
+  "PROVIDER CONTACTED",
+  "CUSTOMER CONFIRMED",
+  "BOOKED",
+  "IN PROGRESS",
+  "COMPLETED",
+  "CLOSED"
+];
+
+function loadRequests(){
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+}
+
+function saveRequests(requests){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
+}
+
+function escapeHtml(value){
+  const map = {
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  };
+  return String(value ?? "").replace(/[&<>"']/g, char => map[char]);
+}
+
+function render(){
+  const requests = loadRequests();
+  const completed = requests.filter(r => r.status === "COMPLETED" || r.status === "CLOSED").length;
+
+  document.getElementById("total").textContent = requests.length;
+  document.getElementById("open").textContent = requests.length - completed;
+  document.getElementById("completed").textContent = completed;
+
+  const board = document.getElementById("requests");
+
+  if(!requests.length){
+    board.innerHTML = "<small>No requests yet.</small>";
+    return;
+  }
+
+  board.innerHTML = requests.map((r,index) => `
+    <div class="card request">
+      <strong>${escapeHtml(r.customer)}</strong><br>
+      <small>${escapeHtml(r.service)} • ${escapeHtml(r.location)}</small>
+      <p>${escapeHtml(r.details)}</p>
+      <div class="status">${escapeHtml(r.status)}</div>
+      <small>Payment: ${escapeHtml(r.payment)}</small>
+      <div class="actions">
+        <button onclick="advance(${index})">Advance Status</button>
+        <button onclick="removeRequest(${index})">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+document.getElementById("requestForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const requests = loadRequests();
+
+  requests.unshift({
+    id: Date.now(),
+    customer: document.getElementById("customer").value,
+    phone: document.getElementById("phone").value,
+    service: document.getElementById("service").value,
+    location: document.getElementById("location").value,
+    datetime: document.getElementById("datetime").value,
+    payment: document.getElementById("payment").value,
+    details: document.getElementById("details").value,
+    status: "NEW REQUEST"
+  });
+
+  saveRequests(requests);
+  event.target.reset();
+  render();
+});
+
+function advance(index){
+  const requests = loadRequests();
+  const current = statuses.indexOf(requests[index].status);
+
+  if(current < statuses.length - 1){
+    requests[index].status = statuses[current + 1];
+    saveRequests(requests);
+    render();
+  }
+}
+
+function removeRequest(index){
+  const requests = loadRequests();
+  requests.splice(index,1);
+  saveRequests(requests);
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

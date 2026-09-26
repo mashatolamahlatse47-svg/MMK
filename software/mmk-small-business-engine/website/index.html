@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMK Small Business Engine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>MMK Small Business Engine</h1>
+      <p>Small business stock, sales, debt and profit</p>
+    </div>
+    <span class="status">DEMO</span>
+  </header>
+
+  <main class="container">
+    <section class="dashboard">
+      <div class="card">
+        <span>Stock</span>
+        <strong id="stock">20</strong>
+        <small>units remaining</small>
+      </div>
+
+      <div class="card">
+        <span>Sales</span>
+        <strong id="sales">R120.00</strong>
+        <small>revenue</small>
+      </div>
+
+      <div class="card">
+        <span>Owing</span>
+        <strong id="owing">R25.00</strong>
+        <small>customer debt</small>
+      </div>
+
+      <div class="card">
+        <span>Profit</span>
+        <strong id="profit">R62.00</strong>
+        <small>net profit</small>
+      </div>
+    </section>
+
+    <nav class="menu">
+      <button class="active">Dashboard</button>
+      <button>Stock</button>
+      <button>Sell</button>
+      <button>Customers</button>
+      <button>Payments</button>
+      <button>Expenses</button>
+      <button>Reports</button>
+    </nav>
+
+    <section class="panel">
+      <h2>Today's Business</h2>
+      <div class="rows">
+        <div><span>Cash sales</span><strong>R75.00</strong></div>
+        <div><span>Credit sales</span><strong>R45.00</strong></div>
+        <div><span>Debt collected</span><strong>R20.00</strong></div>
+        <div><span>Expenses</span><strong>R10.00</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Business Activity</h2>
+      <p class="muted">The visible interface is ready. The next checkpoint connects these screens to the MMK Small Business Engine database.</p>
+    </section>
+  
+<section id="stockSection" class="module-section" style="display:none;">
+  <h2>Stock</h2>
+  <div id="stockBusiness" class="module-subtitle">Loading business...</div>
+  <div id="stockList"></div>
+</section>
+\n</main>
+
+  <script src="app.js"></script>
+</body>
+</html>

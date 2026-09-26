@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMK Pre-Order</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+    <div class="brand">MMK</div>
+    <div>
+        <p class="eyebrow">ART • CULTURE • BUSINESS</p>
+        <h1>Pre-Order</h1>
+        <p class="subtitle">Order today. Collect without the queue.</p>
+    </div>
+</header>
+
+<main>
+    <section class="welcome">
+        <h2>Today's Menu</h2>
+        <p>Choose what you want and build your order.</p>
+    </section>
+
+    <section id="menu"></section>
+
+    <section class="order-card">
+        <h2>Your Order</h2>
+        <div id="cart"></div>
+
+        <div class="total-row">
+            <span>Total</span>
+            <strong id="total">R0.00</strong>
+        </div>
+
+        <label>
+            Name
+            <input id="customerName" type="text" placeholder="Your name">
+        </label>
+
+        <label>
+            Class / Reference
+            <input id="customerReference" type="text" placeholder="Optional">
+        </label>
+
+        <label>
+            Collection Time
+            <select id="collectionTime">
+                <option value="">Select a time</option>
+                <option>12:00</option>
+                <option>12:30</option>
+                <option>13:00</option>
+                <option>13:30</option>
+                <option>14:00</option>
+            </select>
+        </label>
+
+        <button id="confirmOrder" class="primary">
+            CONFIRM ORDER
+        </button>
+
+        <button id="whatsappOrder" class="whatsapp">
+            ORDER VIA WHATSAPP 📱
+        </button>
+
+        <div id="confirmation" class="confirmation hidden"></div>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

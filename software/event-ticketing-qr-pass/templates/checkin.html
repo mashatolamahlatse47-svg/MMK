@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MMK Ticket Check-in</title>
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body class="checkin-page">
+<main class="checkin-card">
+{% if not valid_signature or not ticket %}
+  <div class="status-badge bad">INVALID PASS</div>
+  <h1>Ticket could not be verified.</h1>
+  <p>Ask the attendee to show the original MMK ticket.</p>
+{% elif ticket.status == 'cancelled' %}
+  <div class="status-badge bad">CANCELLED</div>
+  <h1>Ticket cancelled.</h1>
+  <p>This ticket is not valid for entry.</p>
+{% elif ticket.status == 'checked_in' %}
+  <div class="status-badge warn">ALREADY CHECKED IN</div>
+  <h1>{{ ticket.attendee_name }}</h1>
+  <p>{{ ticket.event_name }} · {{ ticket.event_date }} · {{ ticket.event_time }}</p>
+  <p>Checked in at {{ ticket.checked_in_at }}.</p>
+{% else %}
+  <div class="status-badge good">VALID PASS</div>
+  <h1>{{ ticket.attendee_name }}</h1>
+  <p>{{ ticket.event_name }} · {{ ticket.event_date }} · {{ ticket.event_time }}</p>
+  <p>{{ ticket.venue }}</p>
+  <p><strong>Ticket:</strong> {{ code }}</p>
+  <form id="checkinForm">
+    <input id="adminKey" type="password" placeholder="MMK admin key" required>
+    <button class="primary wide" type="submit">Check in attendee</button>
+  </form>
+  <div id="result" class="tiny"></div>
+  <p class="tiny">The entrance operator's key is sent only in the request header.</p>
+  <script>
+    const form=document.getElementById('checkinForm');
+    form.addEventListener('submit',async(e)=>{e.preventDefault(); const key=document.getElementById('adminKey').value; const r=await fetch('/api/checkin/{{ code }}?sig={{ request.args.get('sig','') }}',{method:'POST',headers:{'X-MMK-Admin-Key':key}}); const d=await r.json(); document.getElementById('result').textContent=d.status || d.error || 'Done'; if(r.ok){form.remove();}});
+  </script>
+{% endif %}
+</main>
+</body>
+</html>

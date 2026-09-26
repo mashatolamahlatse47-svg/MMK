@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMK Local Intercom & Queue System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>MMK Local Intercom & Queue System</h1>
+        <p>Reception & Queue Management</p>
+    </header>
+
+    <main>
+        <section class="check-in">
+            <h2>Patient Check-In</h2>
+
+            <form id="checkInForm">
+                <label>
+                    Patient Name
+                    <input id="fullName" type="text" required>
+                </label>
+
+                <label>
+                    Phone Number
+                    <input id="phone" type="tel">
+                </label>
+
+                <label>
+                    Department
+                    <select id="department">
+                        <option>General</option>
+                        <option>Doctor</option>
+                        <option>Dentist</option>
+                        <option>Pharmacy</option>
+                    </select>
+                </label>
+
+                <button type="submit">Check In Patient</button>
+            </form>
+
+            <div id="ticketResult"></div>
+        </section>
+
+        <section class="queue">
+            <h2>Live Queue</h2>
+            <div id="queueList">Loading queue...</div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

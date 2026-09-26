@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery & Household Essentials</title>
+  <meta name="description" content="Affordable grocery and household essentials in Mamelodi East, Lethabong.">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="hero">
+  <nav class="nav">
+    <div class="logo">MMK MARKET</div>
+    <a href="#products">Shop</a>
+  </nav>
+
+  <div class="hero-content">
+    <p class="eyebrow">GROCERY • HOUSEHOLD • ESSENTIALS</p>
+    <h1>Everyday essentials, close to home.</h1>
+    <p>
+      Shop groceries and household essentials, check available prices
+      and place your order directly on WhatsApp.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href="#products">View Products</a>
+      <a class="btn secondary" href="https://wa.me/27715078355?text=Hello%20Molebogeng%2C%20I%20would%20like%20to%20place%20an%20order.">
+        WhatsApp Order
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="section" id="products">
+  <div class="section-heading">
+    <p class="eyebrow">PRODUCT CATALOGUE</p>
+    <h2>Groceries & Household Essentials</h2>
+    <p>Select products and build your WhatsApp order.</p>
+  </div>
+
+  <div id="categoryFilters" class="filters"></div>
+  <div id="productGrid" class="product-grid"></div>
+</section>
+
+<section class="order-section">
+  <div>
+    <p class="eyebrow">READY TO ORDER?</p>
+    <h2>Send your shopping list on WhatsApp.</h2>
+    <p>Your selected items will be prepared as a WhatsApp message.</p>
+  </div>
+
+  <button class="btn primary" id="whatsappOrder">
+    Send WhatsApp Order
+  </button>
+</section>
+
+<section class="section contact-section">
+  <div class="section-heading">
+    <p class="eyebrow">CONTACT & LOCATION</p>
+    <h2>Find us</h2>
+  </div>
+
+  <div class="contact-grid">
+    <div class="info-card">
+      <span>📍</span>
+      <h3>Location</h3>
+      <p>
+        South Africa, Gauteng<br>
+        Mamelodi East<br>
+        Via Old Bronkhorstspruit Route<br>
+        Lethabong, Tshwane District 6<br>
+        Plot 3/4
+      </p>
+    </div>
+
+    <div class="info-card">
+      <span>👤</span>
+      <h3>Contact</h3>
+      <p>Molebogeng</p>
+      <strong>071 507 8355</strong>
+
+      <div class="contact-actions">
+        <a class="btn small" href="tel:+27715078355">Call</a>
+        <a class="btn small" href="sms:+27715078355">SMS</a>
+        <a class="btn small" href="https://wa.me/27715078355">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>© 2026 MMK Market • Grocery & Household Essentials</p>
+</footer>
+
+<script src="products.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
+
+<section class="section admin-section" id="admin">
+  <div class="section-heading">
+    <p class="eyebrow">OWNER / ADMIN</p>
+    <h2>Manage Products & Prices</h2>
+    <p>Update prices and product information from this device.</p>
+  </div>
+
+  <div class="admin-panel">
+
+    <div class="admin-form">
+      <input id="adminName" type="text" placeholder="Product name">
+      <input id="adminSize" type="text" placeholder="Size e.g. 10 kg">
+      <input id="adminCategory" type="text" placeholder="Category">
+      <input id="adminPrice" type="number" min="0" step="0.01" placeholder="Price in R">
+
+      <button class="btn primary" id="addProduct">
+        Add Product
+      </button>
+    </div>
+
+    <div id="adminProducts" class="admin-products"></div>
+
+  </div>
+</section>
+
+<script src="admin.js"></script>
