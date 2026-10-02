@@ -34,7 +34,12 @@ def is_authorized(target, port, activity):
         if authorized_target.get("host") != target:
             continue
 
-        if str(port) in [str(item) for item in authorized_target.get("ports", [])]:
+        requested_ports = [item.strip() for item in str(port).split(",") if item.strip()]
+        authorized_ports = {
+            str(item) for item in authorized_target.get("ports", [])
+        }
+
+        if requested_ports and all(item in authorized_ports for item in requested_ports):
             return True
 
     return False
