@@ -1,0 +1,23 @@
+{
+  "assessment_id": "MMK-LAB-001",
+  "status": "AUTHORIZED",
+  "owner": "MMK",
+  "purpose": "MMK Security Auditor controlled training lab",
+  "targets": [
+    {
+      "host": "127.0.0.1",
+      "ports": ["8080"]
+    }
+  ],
+  "allowed_activities": [
+    "port_discovery",
+    "service_version_detection"
+  ],
+  "prohibited_activities": [
+    "denial_of_service",
+    "destructive_testing",
+    "data_destruction",
+    "unauthorized_access"
+  ],
+  "authorization_reference": "MMK-owned local training target"
+}

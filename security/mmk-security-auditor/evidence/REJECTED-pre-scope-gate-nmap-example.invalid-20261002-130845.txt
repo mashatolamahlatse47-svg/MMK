@@ -1,0 +1,12 @@
+MMK SECURITY AUDITOR — NMAP EVIDENCE
+Timestamp: 20261002-130845
+Target: example.invalid
+Ports: 443
+Command: nmap -sV -p 443 example.invalid
+
+----- NMAP OUTPUT -----
+Starting Nmap 7.991 ( https://nmap.org ) at 2026-10-02 13:08 +0200
+Nmap done: 0 IP addresses (0 hosts up) scanned in 0.99 seconds
+Error resolving example.invalid: No address associated with hostname
+Failed to resolve "example.invalid".
+WARNING: No targets were specified, so 0 hosts scanned.

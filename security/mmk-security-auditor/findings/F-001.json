@@ -1,0 +1,13 @@
+{
+  "finding_id": "F-001",
+  "severity": "INFO",
+  "title": "HTTP service discovered on TCP/8080",
+  "asset": "127.0.0.1:8080",
+  "observation": "TCP port 8080 is open and the service was identified as HTTP SimpleHTTPServer 0.6 (Python 3.14.6).",
+  "evidence": [
+    "evidence/nmap-127.0.0.1-20261002-130812.txt"
+  ],
+  "risk": "The exposed service is an observation requiring review. The evidence alone does not establish a vulnerability.",
+  "recommendation": "Confirm that the service is intentionally exposed, verify its purpose, and review its configuration and access requirements.",
+  "status": "OPEN"
+}
