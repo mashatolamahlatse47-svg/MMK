@@ -315,3 +315,28 @@ Never use the four-shelf system as a reason to delete unfinished work.
 
 Historical, experimental and abandoned-looking work must be inspected before any deletion decision.
 
+
+---
+
+## 3. MMK Business Website
+
+Source:
+templates/mmk-business-website
+
+Release:
+releases/MMK-Business-Website-v1.0.0
+
+Package:
+releases/MMK-Business-Website-v1.0.0.zip
+
+Version:
+1.0.0
+
+Evidence:
+Reusable generic website template, MMK_WORKSHOP working demo, README, CUSTOMER-GUIDE, VERSION, automated template tests, browser/mobile testing, clean release package and verified ZIP integrity.
+
+Status:
+Release verified; Founder Final Approval: APPROVED.
+
+---
+

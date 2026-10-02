@@ -13,3 +13,10 @@ Release-verified MMK products.
    - Location: software/event-ticketing-qr-pass
    - Version: 1.0.0
    - Status: Release evidence verified
+
+3. MMK Business Website
+   - Source: templates/mmk-business-website
+   - Release: releases/MMK-Business-Website-v1.0.0
+   - Package: releases/MMK-Business-Website-v1.0.0.zip
+   - Version: 1.0.0
+   - Status: Release verified; Founder Final Approval: APPROVED
