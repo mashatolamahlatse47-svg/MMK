@@ -46,9 +46,8 @@ async function loadDashboard() {
     state.owing = data.outstanding_credit_cents;
     state.expenses = data.expenses_cents;
 
-    // Temporary dashboard calculation.
-    // Full COGS-based profit reporting is already handled by ReportsEngine.
-    state.profit = state.revenue - state.expenses;
+    // Use the backend ReportsEngine result so COGS is included.
+    state.profit = data.net_profit_cents;
 
     renderDashboard();
   } catch (error) {

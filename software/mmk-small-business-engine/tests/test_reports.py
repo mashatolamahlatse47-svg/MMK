@@ -49,6 +49,7 @@ def main():
             1500,
             "CASH",
             stock_batch_id=batch_id,
+            sale_date="2026-09-22",
         )
 
         credit_sale = engine.sell(
@@ -59,6 +60,7 @@ def main():
             "CREDIT",
             customer_id=customer_id,
             stock_batch_id=batch_id,
+            sale_date="2026-09-22",
         )
 
         with engine.connect() as conn:
@@ -98,6 +100,8 @@ def main():
             account["id"],
             2000,
             "CASH",
+            None,
+            "2026-09-22",
         )
 
         summary = reports.financial_summary(

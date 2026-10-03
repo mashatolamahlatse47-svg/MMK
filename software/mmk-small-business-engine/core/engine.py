@@ -206,6 +206,7 @@ class SmallBusinessEngine:
         customer_id=None,
         stock_batch_id=None,
         due_date=None,
+        sale_date=None,
     ):
         if quantity <= 0:
             raise ValueError("Sale quantity must be greater than zero.")
@@ -275,7 +276,7 @@ class SmallBusinessEngine:
                 )
 
         total_cents = quantity * unit_price_cents
-        sale_date = datetime.now().date().isoformat()
+        sale_date = sale_date or datetime.now().date().isoformat()
 
         with self.connect() as conn:
             cur = conn.execute(
@@ -394,9 +395,12 @@ class SmallBusinessEngine:
         amount_cents,
         payment_method="CASH",
         notes=None,
+        payment_date=None,
     ):
         if amount_cents <= 0:
             raise ValueError("Payment must be greater than zero.")
+
+        payment_date = payment_date or datetime.now().date().isoformat()
 
         with self.connect() as conn:
             account = conn.execute(
@@ -449,7 +453,7 @@ class SmallBusinessEngine:
                     credit_account_id,
                     amount_cents,
                     payment_method,
-                    datetime.now().date().isoformat(),
+                    payment_date,
                     notes,
                 ),
             )
