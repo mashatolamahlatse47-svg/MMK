@@ -159,6 +159,30 @@ def init_database():
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (source_manufacturing_id) REFERENCES manufacturing_jobs(id)
         );
+
+        CREATE TABLE IF NOT EXISTS audit_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id TEXT NOT NULL UNIQUE,
+            entity_type TEXT NOT NULL,
+            entity_id INTEGER NOT NULL,
+            action TEXT NOT NULL,
+            from_status TEXT,
+            to_status TEXT,
+            actor TEXT NOT NULL DEFAULT '',
+            reason TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS approval_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            approval_id TEXT NOT NULL UNIQUE,
+            entity_type TEXT NOT NULL,
+            entity_id INTEGER NOT NULL,
+            decision TEXT NOT NULL DEFAULT 'PENDING',
+            approved_by TEXT NOT NULL DEFAULT '',
+            reason TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
         """
     )
 

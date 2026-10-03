@@ -1,6 +1,7 @@
 from flask import request, redirect, render_template_string
 
 from database import get_connection
+from workflow import audit_event, transition
 
 
 MANUFACTURING_HTML = """
@@ -112,18 +113,12 @@ MANUFACTURING_HTML = """
        placeholder="Example: MBR-0001">
 
 <label>Manufacturing Stage</label>
-<select name="stage">
-    <option value="INTAKE">INTAKE</option>
-    <option value="PLAN">PLAN</option>
-    <option value="BUILD">BUILD</option>
-    <option value="CHECK">CHECK</option>
-    <option value="TEST">TEST</option>
-    <option value="FIX">FIX</option>
-    <option value="QUALITY REVIEW">QUALITY REVIEW</option>
-    <option value="PACKAGE">PACKAGE</option>
-    <option value="RELEASE">RELEASE</option>
-    <option value="PRESERVE">PRESERVE</option>
-</select>
+<input type="text" value="INTAKE" disabled>
+<input type="hidden" name="stage" value="INTAKE">
+<small>
+    New manufacturing jobs always enter the Factory at INTAKE.
+    Stage changes happen through the controlled workflow.
+</small>
 
 <label>Job Status</label>
 <select name="status">
@@ -266,7 +261,7 @@ def manufacturing_page():
                 product_db_id,
                 service_db_id,
                 member_db_id,
-                request.form.get("stage", "INTAKE"),
+                "INTAKE",
                 request.form.get("status", "OPEN"),
                 request.form.get(
                     "expected_outcome", ""
@@ -277,9 +272,79 @@ def manufacturing_page():
             ),
         )
 
+        manufacturing_row = connection.execute(
+            "SELECT id FROM manufacturing_jobs WHERE manufacturing_id = ?",
+            (request.form["manufacturing_id"].strip(),),
+        ).fetchone()
+
+        audit_event(
+            connection,
+            f"MFG-CREATE-{request.form['manufacturing_id'].strip()}",
+            "MANUFACTURING",
+            manufacturing_row["id"],
+            "MANUFACTURING_CREATED",
+            actor="MMK Founder",
+            reason="New manufacturing job entered Factory workflow at INTAKE.",
+        )
+
         connection.commit()
         connection.close()
 
         return redirect("/dashboard")
 
     return render_template_string(MANUFACTURING_HTML)
+
+
+def transition_manufacturing(
+    manufacturing_id,
+    to_stage,
+    actor="MMK Founder",
+    reason="",
+):
+    connection = get_connection()
+
+    try:
+        row = connection.execute(
+            """
+            SELECT id, stage
+            FROM manufacturing_jobs
+            WHERE manufacturing_id = ?
+            """,
+            (manufacturing_id,),
+        ).fetchone()
+
+        if row is None:
+            raise ValueError(
+                f"Manufacturing job not found: {manufacturing_id}"
+            )
+
+        from_stage = row["stage"]
+
+        event_id = transition(
+            connection,
+            "MANUFACTURING",
+            row["id"],
+            from_stage,
+            to_stage,
+            actor=actor,
+            reason=reason,
+        )
+
+        connection.execute(
+            """
+            UPDATE manufacturing_jobs
+            SET stage = ?
+            WHERE id = ?
+            """,
+            (to_stage, row["id"]),
+        )
+
+        connection.commit()
+        return event_id
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()

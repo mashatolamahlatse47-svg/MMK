@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, request
 
 from database import init_database
 
@@ -30,8 +30,22 @@ from opportunity_list import opportunity_list, transition_opportunity_route
 from products import product_page
 from services import service_page
 from members import member_page
-from manufacturing import manufacturing_page
+from manufacturing import manufacturing_page, transition_manufacturing
 from projects import project_page
+
+
+def transition_manufacturing_route(manufacturing_id):
+    to_stage = request.form.get("to_stage", "").strip()
+
+    transition_manufacturing(
+        manufacturing_id,
+        to_stage,
+        actor="MMK Founder",
+        reason=f"Controlled UI transition to {to_stage}.",
+    )
+
+    return redirect("/manufacturing/new")
+
 
 app.add_url_rule("/dashboard", "dashboard", dashboard)
 app.add_url_rule("/opportunities", "opportunities", opportunity_list)
@@ -70,6 +84,12 @@ app.add_url_rule(
     "new_manufacturing",
     manufacturing_page,
     methods=["GET", "POST"],
+)
+app.add_url_rule(
+    "/manufacturing/<manufacturing_id>/transition",
+    "transition_manufacturing_route",
+    transition_manufacturing_route,
+    methods=["POST"],
 )
 app.add_url_rule(
     "/members/new",
