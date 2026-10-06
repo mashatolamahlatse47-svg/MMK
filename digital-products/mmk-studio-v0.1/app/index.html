@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>MMK Studio v0.4</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">MMK <span>STUDIO</span></div>
+  <p>Create. Record. Build.</p>
+</header>
+
+<main>
+  <section class="project-bar">
+    <div>
+      <small>CURRENT PROJECT</small>
+      <h2 id="projectName">My First Beat</h2>
+    </div>
+    <button data-action="new-project">NEW</button>
+  </section>
+
+  <section class="studio-card">
+    <div class="beat-top">
+      <button data-action="undo">↩ UNDO</button>
+      <button data-action="autosave">⚡ AUTO-SAVE</button>
+      <label>BPM <input id="bpm" type="number" min="40" max="220" value="90"></label>
+      <button class="primary" data-action="play">▶ PLAY</button>
+      <button data-action="stop">■ STOP</button>
+      <button data-action="new-beat">🎲 NEW BEAT</button>
+    </div>
+
+    <div class="wave-panel">
+      <div class="wave-title">MMK VISUAL WORKSPACE</div>
+      <canvas id="waveform" width="900" height="150"></canvas>
+      <div class="timeline"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+    </div>
+
+    <div id="pattern" class="pattern"></div>
+
+    <section class="mixer-panel">
+  <div class="timeline-head">
+    <strong>🎚️ MIXER</strong>
+    <span id="mixerStatus">Ready</span>
+  </div>
+
+  <div class="mixer-channel">
+    <strong>BEAT</strong>
+    <label>Volume <input id="beatVolume" type="range" min="0" max="1" step="0.01" value="1"></label>
+    <button id="beatMute">MUTE</button>
+    <button id="beatSolo">SOLO</button>
+    <label>Pan <input id="beatPan" type="range" min="-1" max="1" step="0.01" value="0"></label>
+  </div>
+
+  <div class="mixer-channel">
+    <strong>SAMPLE</strong>
+    <label>Volume <input id="sampleVolume" type="range" min="0" max="1" step="0.01" value="1"></label>
+    <button id="sampleMute">MUTE</button>
+    <button id="sampleSolo">SOLO</button>
+    <label>Pan <input id="samplePan" type="range" min="-1" max="1" step="0.01" value="0"></label>
+  </div>
+
+  <div class="mixer-channel">
+    <strong>VOICE</strong>
+    <label>Volume <input id="voiceVolume" type="range" min="0" max="1" step="0.01" value="1"></label>
+    <button id="voiceMute">MUTE</button>
+    <button id="voiceSolo">SOLO</button>
+    <label>Pan <input id="voicePan" type="range" min="-1" max="1" step="0.01" value="0"></label>
+  </div>
+
+  <div class="mixer-master">
+    <strong>MASTER</strong>
+    <input id="masterVolume" type="range" min="0" max="1" step="0.01" value="1">
+  </div>
+</section>
+
+<div class="timeline-editor">
+      <div class="timeline-head">
+        <strong>🎚️ TIMELINE</strong>
+        <span id="timelineStatus">Ready</span>
+      </div>
+      <div class="timeline-tools">
+        <input id="clipFile" type="file" accept="audio/*" hidden>
+        <button id="addClipBtn">＋ ADD AUDIO</button>
+        <button id="snapBtn">🧲 SNAP ON</button>
+        <button id="loopBtn">🔁 LOOP OFF</button>
+        <button id="removeClipBtn">✕ REMOVE SELECTED</button>
+      </div>
+      <div class="track">
+        <span class="track-name">BEAT</span>
+        <div class="track-grid" id="beatTrack"></div>
+      </div>
+      <div class="track">
+        <span class="track-name">SAMPLE</span>
+        <div class="track-grid" id="sampleTrack"></div>
+      </div>
+      <div class="track">
+        <span class="track-name">VOICE</span>
+        <div class="track-grid" id="voiceTrack"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools">
+    <button data-action="samples">🎵 SAMPLES</button>
+    <button data-action="record">🎙️ RECORD</button>
+    <button data-action="lyrics">✍️ LYRICS</button>
+    <button data-action="projects">📁 PROJECTS</button>
+    <button data-action="save">💾 SAVE</button>
+    <button data-action="export">📦 EXPORT</button>
+    <button data-action="import">📥 IMPORT</button>
+  </section>
+
+  <section id="workspace" class="workspace">
+    <h3>MMK Studio</h3>
+    <p>Choose a tool above to start.</p>
+  </section>
+
+  <section class="quick-start">
+    <h3>QUICK START</h3>
+    <p>1. Make Beat → 2. Add Samples → 3. Align → 4. Record → 5. Save</p>
+  </section>
+</main>
+
+<footer>MMK Studio v0.4 • Personal MMK Music Workspace</footer>
+<script src="app.js"></script>
+</body>
+</html>
