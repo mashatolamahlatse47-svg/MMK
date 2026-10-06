@@ -19,7 +19,12 @@
       <small>CURRENT PROJECT</small>
       <h2 id="projectName">My First Beat</h2>
     </div>
-    <button data-action="new-project">NEW</button>
+
+    <div class="project-actions">
+      <button data-action="new-project">NEW</button>
+      <button class="primary" data-action="save">💾 SAVE PROJECT</button>
+      <button data-action="projects">📁 PROJECTS</button>
+    </div>
   </section>
 
   <section class="studio-card">
@@ -32,13 +37,232 @@
       <button data-action="new-beat">🎲 NEW BEAT</button>
     </div>
 
-    <div class="wave-panel">
-      <div class="wave-title">MMK VISUAL WORKSPACE</div>
-      <canvas id="waveform" width="900" height="150"></canvas>
-      <div class="timeline"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
-    </div>
 
     <div id="pattern" class="pattern"></div>
+
+    <section id="liveProjectDashboard" class="live-project-dashboard">
+  <div class="timeline-head">
+    <strong>🔴 MMK LIVE PROJECT FLOW</strong>
+    <span id="liveDashboardStatus">LIVE</span>
+  </div>
+
+  <div class="live-flow">
+    <div class="flow-node" data-flow="project">
+      <span class="flow-dot"></span>
+      <small>PROJECT</small>
+      <strong id="liveProjectName">My First Beat</strong>
+    </div>
+
+    <div class="flow-line"></div>
+
+    <div class="flow-node" data-flow="beat">
+      <span class="flow-dot"></span>
+      <small>BEAT</small>
+      <strong id="liveProjectBpm">90 BPM</strong>
+    </div>
+
+    <div class="flow-line"></div>
+
+    <div class="flow-node" data-flow="instrument">
+      <span class="flow-dot"></span>
+      <small>INSTRUMENT</small>
+      <strong id="liveInstrument">KICK</strong>
+    </div>
+
+    <div class="flow-line"></div>
+
+    <div class="flow-node" data-flow="timeline">
+      <span class="flow-dot"></span>
+      <small>TIMELINE</small>
+      <strong id="liveTimelineState">READY</strong>
+    </div>
+
+    <div class="flow-line"></div>
+
+    <div class="flow-node" data-flow="mix">
+      <span class="flow-dot"></span>
+      <small>MIX</small>
+      <strong>STUDIO</strong>
+    </div>
+
+    <div class="flow-line"></div>
+
+    <div class="flow-node" data-flow="save">
+      <span class="flow-dot"></span>
+      <small>SAVE</small>
+      <strong id="liveAutosaveState">AUTO-SAVE ON</strong>
+    </div>
+  </div>
+
+  <div class="live-flow-current">
+    <small>CURRENT WORK</small>
+    <strong id="liveCurrentWork">KICK • DRUMS</strong>
+    <span id="liveLastAction">Studio ready</span>
+  </div>
+</section>
+
+<section id="aiMusicLab" class="ai-music-lab">
+  <div class="timeline-head">
+    <strong>🤖 MMK AI MUSIC LAB</strong>
+    <span id="aiMusicLabStatus">READY</span>
+  </div>
+
+  <div class="ai-lab-intro">
+    <small>CREATIVE AI WORKSPACE</small>
+    <p>
+      Turn your idea into hooks, lyrics, song structures and production ideas.
+    </p>
+  </div>
+
+  <div class="ai-tools-grid">
+
+    <button class="ai-tool" data-ai-tool="hook">
+      <span>🎤</span>
+      <strong>AI HOOK</strong>
+      <small>Generate hook ideas</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="verse">
+      <span>✍️</span>
+      <strong>AI VERSE</strong>
+      <small>Build verse ideas</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="chorus">
+      <span>🔥</span>
+      <strong>AI CHORUS</strong>
+      <small>Create chorus concepts</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="structure">
+      <span>🎼</span>
+      <strong>SONG STRUCTURE</strong>
+      <small>Plan the full song</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="style">
+      <span>🎧</span>
+      <strong>AI STYLE</strong>
+      <small>Choose sound & mood</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="beat">
+      <span>🥁</span>
+      <strong>AI BEAT IDEA</strong>
+      <small>Suggest production ideas</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="automation">
+      <span>⚙️</span>
+      <strong>AUTOMATION</strong>
+      <small>Automate Studio tasks</small>
+    </button>
+
+    <button class="ai-tool" data-ai-tool="brain">
+      <span>🧠</span>
+      <strong>PROJECT BRAIN</strong>
+      <small>Understand this project</small>
+    </button>
+
+  </div>
+
+  <div class="ai-workspace">
+    <div>
+      <small>AI WORKSPACE</small>
+      <h3 id="aiWorkspaceTitle">Choose an AI tool</h3>
+    </div>
+
+    <textarea
+      id="aiPrompt"
+      rows="4"
+      placeholder="Describe your idea, topic, mood or song..."
+    ></textarea>
+
+    <div class="ai-samples-panel">
+  <div class="ai-samples-head">
+    <div>
+      <small>SAMPLE WORKSPACE</small>
+      <h3>🎵 ADD SAMPLES</h3>
+    </div>
+
+    <span id="aiSamplesStatus">0 SAMPLES</span>
+  </div>
+
+  <input
+    id="aiSampleInput"
+    type="file"
+    accept="audio/*"
+    multiple
+    hidden
+  >
+
+  <button id="aiAddSamplesBtn" class="primary">
+    ＋ ADD SAMPLES
+  </button>
+
+  <div id="aiSamplesList" class="ai-samples-list">
+    <span>No samples added yet.</span>
+  </div>
+</div>
+
+<div class="ai-actions">
+      <button id="aiGenerateBtn" class="primary">✨ GENERATE</button>
+      <button id="aiClearBtn">CLEAR</button>
+    </div>
+
+    <div id="aiOutput" class="ai-output">
+      <span>AI results will appear here.</span>
+    </div>
+  </div>
+</section>
+
+<section id="instrumentLab" class="instrument-lab">
+      <div class="timeline-head">
+        <strong>🎚️ MMK INSTRUMENT / BEAT LAB</strong>
+        <span id="instrumentLabStatus">Ready</span>
+      </div>
+
+      <div class="instrument-categories">
+        <button class="instrument-category active" data-instrument-category="drums">🥁 DRUMS</button>
+        <button class="instrument-category" data-instrument-category="bass">🎸 BASS</button>
+        <button class="instrument-category" data-instrument-category="guitar">🎸 GUITAR</button>
+        <button class="instrument-category" data-instrument-category="keys">🎹 KEYS</button>
+      </div>
+
+      <div class="instrument-bank" data-bank="drums">
+        <button class="instrument-pad" data-instrument="kick">KICK</button>
+        <button class="instrument-pad" data-instrument="snare">SNARE</button>
+        <button class="instrument-pad" data-instrument="hat">HI-HAT</button>
+        <button class="instrument-pad" data-instrument="clap">CLAP</button>
+        <button class="instrument-pad" data-instrument="perc">PERC</button>
+      </div>
+
+      <div class="instrument-bank" data-bank="bass" hidden>
+        <button class="instrument-pad" data-instrument="bass-1">BASS 1</button>
+        <button class="instrument-pad" data-instrument="bass-2">BASS 2</button>
+      </div>
+
+      <div class="instrument-bank" data-bank="guitar" hidden>
+        <button class="instrument-pad" data-instrument="guitar-1">GUITAR 1</button>
+        <button class="instrument-pad" data-instrument="guitar-2">GUITAR 2</button>
+      </div>
+
+      <div class="instrument-bank" data-bank="keys" hidden>
+        <button class="instrument-pad" data-instrument="piano">PIANO</button>
+        <button class="instrument-pad" data-instrument="synth">SYNTH</button>
+        <button class="instrument-pad" data-instrument="organ">ORGAN</button>
+      </div>
+
+      <div class="instrument-transport">
+        <button id="instrumentPlayBtn" class="primary">▶ PLAY</button>
+        <button id="instrumentStopBtn">■ STOP</button>
+        <button id="addInstrumentToStudioBtn">＋ ADD TO STUDIO</button>
+      </div>
+
+      <div id="instrumentPattern" class="instrument-pattern">
+        <span>Choose an instrument, then PLAY.</span>
+      </div>
+    </section>
 
     <section class="mixer-panel">
   <div class="timeline-head">
@@ -83,6 +307,8 @@
       </div>
       <div class="timeline-tools">
         <input id="clipFile" type="file" accept="audio/*" hidden>
+        <button id="playTimelineBtn">▶ PLAY</button>
+        <button id="stopTimelineBtn">■ STOP</button>
         <button id="addClipBtn">＋ ADD AUDIO</button>
         <button id="snapBtn">🧲 SNAP ON</button>
         <button id="loopBtn">🔁 LOOP OFF</button>

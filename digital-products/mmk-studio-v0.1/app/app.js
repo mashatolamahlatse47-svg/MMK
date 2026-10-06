@@ -5,6 +5,109 @@ const bpmEl = document.getElementById("bpm");
 const canvas = document.getElementById("waveform");
 
 let audioContext = null;
+
+/* =========================================================
+   MMK STUDIO AUDIO VAULT
+   Persistent offline audio storage using IndexedDB
+   ========================================================= */
+
+const MMK_AUDIO_DB = "mmkStudioAudioVault";
+const MMK_AUDIO_STORE = "audio";
+
+function openAudioVault() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(MMK_AUDIO_DB, 1);
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains(MMK_AUDIO_STORE)) {
+        db.createObjectStore(MMK_AUDIO_STORE, { keyPath: "id" });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveAudioBlob(blob, name = "audio") {
+  const id =
+    "audio-" +
+    Date.now() +
+    "-" +
+    Math.random().toString(36).slice(2, 8);
+
+  const db = await openAudioVault();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MMK_AUDIO_STORE, "readwrite");
+    const store = tx.objectStore(MMK_AUDIO_STORE);
+
+    store.put({
+      id,
+      name,
+      type: blob.type || "audio/*",
+      blob,
+      savedAt: new Date().toISOString()
+    });
+
+    tx.oncomplete = () => {
+      db.close();
+      resolve(id);
+    };
+
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
+}
+
+async function loadAudioBlob(id) {
+  if (!id) return null;
+
+  const db = await openAudioVault();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MMK_AUDIO_STORE, "readonly");
+    const request = tx.objectStore(MMK_AUDIO_STORE).get(id);
+
+    request.onsuccess = () => {
+      const record = request.result || null;
+      db.close();
+      resolve(record ? record.blob : null);
+    };
+
+    request.onerror = () => {
+      db.close();
+      reject(request.error);
+    };
+  });
+}
+
+async function deleteAudioBlob(id) {
+  if (!id) return;
+
+  const db = await openAudioVault();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MMK_AUDIO_STORE, "readwrite");
+    tx.objectStore(MMK_AUDIO_STORE).delete(id);
+
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
+}
+
+
 let beatTimer = null;
 let currentStep = -1;
 let mediaRecorder = null;
@@ -29,7 +132,9 @@ let project = {
 let pattern = {
   kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
   snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-  hat:   [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]
+  hat:   [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+  clap:  [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+  perc:  [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0]
 };
 
 function getAudioContext() {
@@ -89,8 +194,37 @@ function noise(duration, highpass, volume) {
   source.start();
 }
 
-function playSnare() { noise(0.18, 900, 0.18); }
-function playHat() { noise(0.055, 5000, 0.07); }
+function playSnare() {
+  noise(0.18, 900, 0.18);
+}
+
+function playHat() {
+  noise(0.055, 5000, 0.07);
+}
+
+function playClap() {
+  noise(0.11, 1400, 0.13);
+  setTimeout(() => noise(0.07, 1800, 0.08), 28);
+}
+
+function playPerc() {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(620, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.09);
+
+  gain.gain.setValueAtTime(0.16, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.1);
+}
 
 function playStep(step) {
   currentStep = step;
@@ -100,16 +234,32 @@ function playStep(step) {
   if (pattern.kick[step]) playKick();
   if (pattern.snare[step]) playSnare();
   if (pattern.hat[step]) playHat();
+  if (pattern.clap[step]) playClap();
+  if (pattern.perc[step]) playPerc();
 }
 
-function startBeat() {
+async function startBeat() {
   stopBeat();
-  getAudioContext();
+
+  const ctx = getAudioContext();
+
+  if (ctx.state === "suspended") {
+    await ctx.resume();
+  }
+
+  if (ctx.state !== "running") {
+    console.error("MMK AudioContext not running:", ctx.state);
+    return;
+  }
+
   const bpm = Math.max(40, Math.min(220, Number(bpmEl.value) || 90));
   project.bpm = bpm;
+
   let step = 0;
   const interval = 60000 / bpm / 4;
+
   playStep(step);
+
   beatTimer = setInterval(() => {
     step = (step + 1) % 16;
     playStep(step);
@@ -334,6 +484,7 @@ function getStudioSnapshot() {
     timeline: JSON.parse(JSON.stringify(timeline)),
     clips: typeof clips !== "undefined"
       ? clips.map(c => ({
+          audioId: c.audioId || null,
           name: c.name,
           start: Number(c.start) || 0,
           duration: Number(c.duration) || 4,
@@ -446,14 +597,6 @@ function undo() {
   renderPattern();
   renderTimeline();
   drawWaveform();
-}
-
-function autoSave() {
-  if (!autosaveEnabled) return;
-  saveProject(false);
-  const status = document.getElementById("timelineStatus");
-  status.textContent = "Auto-saved";
-  status.classList.add("autosave-on");
 }
 
 function renderTimeline() {
@@ -596,6 +739,7 @@ function importProject() {
         clips = Array.isArray(data.clips)
           ? data.clips.map(c => ({
               id: Date.now() + Math.random(),
+              audioId: c.audioId || null,
               name: c.name || "Audio Clip",
               url: "",
               start: Number(c.start) || 0,
@@ -712,7 +856,12 @@ function showProjects() {
       const id = button.dataset.id;
       const type = button.dataset.type;
 
-      if (loadLibraryItem(id, type)) {
+      loadLibraryItem(id, type).then(success => {
+        if (!success) {
+          alert("MMK Studio could not open this project.");
+          return;
+        }
+
         setTimelineStatus(
           type === "draft" ? "Draft opened" : "Project opened"
         );
@@ -722,7 +871,11 @@ function showProjects() {
             ? "MMK draft opened successfully."
             : "MMK project opened successfully."
         );
-      }
+      }).catch(error => {
+        console.error("MMK library open error:", error);
+        setTimelineStatus("Project open failed");
+        alert("MMK Studio could not open this project.");
+      });
     };
   });
 }
@@ -737,7 +890,7 @@ function loadLibraryItem(id, type) {
   return applyProjectData(item);
 }
 
-function applyProjectData(data) {
+async function applyProjectData(data) {
   if (!data || !data.project || !data.pattern) return false;
 
   project = data.project;
@@ -753,6 +906,7 @@ function applyProjectData(data) {
     clips = Array.isArray(data.clips)
       ? data.clips.map(c => ({
           id: Date.now() + Math.random(),
+          audioId: c.audioId || null,
           name: c.name || "Audio Clip",
           url: "",
           start: Number(c.start) || 0,
@@ -774,16 +928,33 @@ function applyProjectData(data) {
     renderRealTimeline();
   }
 
+  if (typeof clips !== "undefined" && clips.length) {
+    for (const clip of clips) {
+      if (!clip.audioId) continue;
+
+      try {
+        const blob = await loadAudioBlob(clip.audioId);
+
+        if (blob) {
+          clip.url = URL.createObjectURL(blob);
+        }
+      } catch (error) {
+        console.error("MMK audio restore error:", error);
+      }
+    }
+
+    renderRealTimeline();
+  }
+
   return true;
 }
-
-function loadProject() {
+async function loadProject() {
   const saved = localStorage.getItem("mmkStudioProject");
   if (!saved) return false;
 
   try {
     const data = JSON.parse(saved);
-    return applyProjectData(data);
+    return await applyProjectData(data);
   } catch (_) {
     return false;
   }
@@ -798,7 +969,8 @@ function newProject() {
     bpm: 90,
     lyrics: "",
     samples: [],
-    recordings: []
+    recordings: [],
+    libraryId: null
   };
 
   pattern = {
@@ -842,7 +1014,20 @@ document.addEventListener("click", e => {
   if (action === "record") recordAudio();
   if (action === "lyrics") showLyrics();
   if (action === "projects") showProjects();
-  if (action === "save") saveProject();
+
+  if (action === "save") {
+    try {
+      saveProject();
+    } catch (error) {
+      console.error("MMK SAVE ERROR:", error);
+      const status = document.getElementById("timelineStatus");
+      if (status) {
+        status.textContent = "SAVE ERROR: " + (error.message || error);
+      }
+      alert("MMK SAVE ERROR: " + (error.message || error));
+    }
+  }
+
   if (action === "export") exportProject();
   if (action === "import") importProject();
   if (action === "undo") undo();
@@ -858,17 +1043,7 @@ bpmEl.addEventListener("change", () => {
   project.bpm = Number(bpmEl.value) || 90;
 });
 
-renderPattern();
-renderTimeline();
-drawWaveform();
-loadProject();
-
-setInterval(() => {
-  if (autosaveEnabled) autoSave();
-}, 15000);
-
-
-/* MMK STUDIO v0.4 REAL TIMELINE */
+/* MMK STUDIO v0.4 REAL TIMELINE STATE */
 let clips = [];
 let selectedClip = null;
 let snapEnabled = true;
@@ -876,22 +1051,196 @@ let loopEnabled = false;
 let timelinePlaying = false;
 let timelineStart = 0;
 
+renderPattern();
+renderTimeline();
+drawWaveform();
+
+function autoSave() {
+  try {
+    saveDraft(false);
+    setTimelineStatus("Auto-saved draft");
+  } catch (error) {
+    console.error("MMK auto-draft error:", error);
+    setTimelineStatus("Auto-save failed");
+  }
+}
+
+setInterval(() => {
+  if (autosaveEnabled) autoSave();
+}, 15000);
+
+
+loadProject();
+
+/* MMK STUDIO v0.4 REAL TIMELINE */
+
 function setTimelineStatus(msg){
   const el = document.getElementById("timelineStatus");
   if(el) el.textContent = msg;
 }
 
-function makeClip(file){
+async function makeClip(file){
+  if(!file) return null;
+
   const url = URL.createObjectURL(file);
+  const audioId = await saveAudioBlob(file, file.name);
+
+  const duration = await new Promise((resolve) => {
+    const probe = new Audio();
+
+    probe.onloadedmetadata = () => {
+      const value = Number(probe.duration);
+      URL.revokeObjectURL(probe.src);
+      resolve(Number.isFinite(value) && value > 0 ? value : 4);
+    };
+
+    probe.onerror = () => {
+      URL.revokeObjectURL(probe.src);
+      resolve(4);
+    };
+
+    probe.src = url;
+  });
+
   return {
     id: Date.now() + Math.random(),
+    audioId,
     name: file.name,
     url,
     start: 0,
-    duration: 4,
+    duration,
     trimStart: 0,
-    trimEnd: 4
+    trimEnd: duration
   };
+}
+
+
+let activeTimelineAudio = null;
+
+async function playSelectedTimelineClip(){
+  if(typeof selectedClip === "undefined" || selectedClip === null){
+    setTimelineStatus("Select an audio clip first");
+    return;
+  }
+
+  const clip = clips.find(c => c.id === selectedClip);
+  if(!clip){
+    setTimelineStatus("Selected clip not found");
+    return;
+  }
+
+  try{
+    if(activeTimelineAudio){
+      activeTimelineAudio.pause();
+      activeTimelineAudio.removeAttribute("src");
+      activeTimelineAudio.load();
+      activeTimelineAudio = null;
+    }
+
+    setTimelineStatus("Loading: " + clip.name);
+
+    let url = clip.url;
+
+    if(!url && clip.audioId){
+      const blob = await loadAudioBlob(clip.audioId);
+
+      if(blob){
+        url = URL.createObjectURL(blob);
+        clip.url = url;
+      }
+    }
+
+    if(!url){
+      setTimelineStatus("Audio file not available");
+      return;
+    }
+
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.src = url;
+    audio.volume = 1;
+    activeTimelineAudio = audio;
+
+    audio.onplay = () => {
+      timelinePlaying = true;
+      setTimelineStatus("Playing: " + clip.name);
+    };
+
+    audio.onended = () => {
+      timelinePlaying = false;
+
+      if(activeTimelineAudio === audio){
+        activeTimelineAudio = null;
+      }
+
+      if(loopEnabled){
+        playSelectedTimelineClip();
+      }else{
+        setTimelineStatus("Finished: " + clip.name);
+      }
+    };
+
+    audio.onerror = () => {
+      timelinePlaying = false;
+
+      if(activeTimelineAudio === audio){
+        activeTimelineAudio = null;
+      }
+
+      console.error("MMK audio error:", audio.error);
+      setTimelineStatus("Audio playback failed");
+    };
+
+    audio.load();
+
+    await new Promise((resolve, reject) => {
+      if(audio.readyState >= 2){
+        resolve();
+        return;
+      }
+
+      const ready = () => {
+        cleanup();
+        resolve();
+      };
+
+      const failed = () => {
+        cleanup();
+        reject(new Error("Audio could not load"));
+      };
+
+      const cleanup = () => {
+        audio.removeEventListener("canplay", ready);
+        audio.removeEventListener("error", failed);
+      };
+
+      audio.addEventListener("canplay", ready, {once:true});
+      audio.addEventListener("error", failed, {once:true});
+    });
+
+    await audio.play();
+
+  }catch(error){
+    console.error("MMK timeline playback error:", error);
+    timelinePlaying = false;
+
+    if(activeTimelineAudio){
+      activeTimelineAudio.pause();
+      activeTimelineAudio = null;
+    }
+
+    setTimelineStatus("Playback could not start");
+  }
+}
+function stopTimelinePlayback(){
+  if(activeTimelineAudio){
+    activeTimelineAudio.pause();
+    activeTimelineAudio.currentTime = 0;
+    activeTimelineAudio = null;
+  }
+
+  timelinePlaying = false;
+  setTimelineStatus("Stopped");
 }
 
 function renderRealTimeline(){
@@ -915,10 +1264,28 @@ function renderRealTimeline(){
     el.style.left = ((clip.start / 16) * 100) + "%";
     el.style.width = Math.max(6, (clip.duration / 16) * 100) + "%";
 
-    el.onclick = ()=>{
+    el.onclick = async ()=>{
       selectedClip = clip.id;
       renderRealTimeline();
-      setTimelineStatus("Selected: " + clip.name);
+      setTimelineStatus("Loading: " + clip.name);
+
+      if(!clip.url && clip.audioId){
+        try{
+          const blob = await loadAudioBlob(clip.audioId);
+
+          if(blob){
+            clip.url = URL.createObjectURL(blob);
+            setTimelineStatus("Selected: " + clip.name);
+          }else{
+            setTimelineStatus("Audio file not found");
+          }
+        }catch(error){
+          console.error("MMK clip preload error:", error);
+          setTimelineStatus("Audio could not be loaded");
+        }
+      }else{
+        setTimelineStatus("Selected: " + clip.name);
+      }
     };
 
     grid.appendChild(el);
@@ -930,15 +1297,32 @@ function snapBeat(value){
   return Math.round(value);
 }
 
-function addAudioClip(file){
+async function addAudioClip(file){
   if(!file) return;
-  const clip = makeClip(file);
-  clip.start = snapBeat(clips.length);
-  clips.push(clip);
-  selectedClip = clip.id;
-  renderRealTimeline();
-  saveProject();
-  setTimelineStatus("Added: " + file.name);
+
+  try {
+    setTimelineStatus("Saving audio: " + file.name);
+
+    const clip = await makeClip(file);
+
+    if(!clip){
+      setTimelineStatus("Audio was not added");
+      return;
+    }
+
+    clip.start = snapBeat(clips.length);
+    clips.push(clip);
+    selectedClip = clip.id;
+
+    renderRealTimeline();
+    saveProject();
+
+    setTimelineStatus("Added and saved: " + file.name);
+  } catch(error) {
+    console.error("MMK audio vault error:", error);
+    setTimelineStatus("Audio save failed");
+    alert("MMK Studio could not save this audio file.");
+  }
 }
 
 function toggleSnap(){
@@ -967,6 +1351,18 @@ function removeSelectedClip(){
 /* Timeline clip persistence is handled directly by saveProject(). */
 
 document.addEventListener("DOMContentLoaded", ()=>{
+  const playTimelineBtn = document.getElementById("playTimelineBtn");
+  const stopTimelineBtn = document.getElementById("stopTimelineBtn");
+
+  if(playTimelineBtn){
+    playTimelineBtn.addEventListener("click", playSelectedTimelineClip);
+  }
+
+  if(stopTimelineBtn){
+    stopTimelineBtn.addEventListener("click", stopTimelinePlayback);
+  }
+
+
   const add = document.getElementById("addClipBtn");
   const input = document.getElementById("clipFile");
 
@@ -994,6 +1390,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
       clips = Array.isArray(data.clips)
         ? data.clips.map(c=>({
             id: Date.now() + Math.random(),
+            audioId: c.audioId || null,
             name: c.name,
             url: "",
             start: Number(c.start) || 0,
@@ -1009,3 +1406,591 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
   renderRealTimeline();
 });
+
+/* =========================================================
+   MMK INSTRUMENT / BEAT LAB — SELECTION LAYER
+   Independent from the main Studio transport.
+   ========================================================= */
+
+const instrumentLabState = {
+  category: "drums",
+  instrument: "kick",
+  playing: false
+};
+
+const instrumentLabPatterns = {
+  kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+  snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+  hat:   [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+  clap:  [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+  perc:  [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+
+  "bass-1":    [1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0],
+  "bass-2":    [1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0],
+
+  "guitar-1":  [1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0],
+  "guitar-2":  [1,0,0,1,0,0,0,1,1,0,0,1,0,0,0,1],
+
+  piano:       [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+  synth:       [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+  organ:       [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0]
+};
+
+function updateInstrumentLabStatus(message) {
+  const status = document.getElementById("instrumentLabStatus");
+  if (status) status.textContent = message;
+}
+
+function selectInstrumentLabCategory(category) {
+  instrumentLabState.category = category;
+
+  document.querySelectorAll("[data-instrument-category]").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.instrumentCategory === category
+    );
+  });
+
+  document.querySelectorAll("[data-bank]").forEach(bank => {
+    bank.hidden = bank.dataset.bank !== category;
+  });
+
+  updateInstrumentLabStatus(
+    category.toUpperCase() + " — choose an instrument"
+  );
+}
+
+function selectInstrumentLabInstrument(instrument) {
+  if (!instrumentLabPatterns[instrument]) return;
+
+  instrumentLabState.instrument = instrument;
+
+  document.querySelectorAll(".instrument-pad").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.instrument === instrument
+    );
+  });
+
+  const patternDisplay = document.getElementById("instrumentPattern");
+
+  if (patternDisplay) {
+    const pattern = instrumentLabPatterns[instrument];
+
+    patternDisplay.textContent =
+      instrument.toUpperCase() +
+      " • " +
+      pattern.map(step => step ? "●" : "·").join(" ");
+  }
+
+  updateInstrumentLabStatus(
+    instrument.toUpperCase() + " selected"
+  );
+}
+
+document.querySelectorAll("[data-instrument-category]").forEach(button => {
+  button.addEventListener("click", () => {
+    selectInstrumentLabCategory(button.dataset.instrumentCategory);
+  });
+});
+
+document.querySelectorAll(".instrument-pad").forEach(button => {
+  button.addEventListener("click", () => {
+    selectInstrumentLabInstrument(button.dataset.instrument);
+  });
+});
+
+const firstInstrumentPad = document.querySelector(
+  '.instrument-pad[data-instrument="kick"]'
+);
+
+if (firstInstrumentPad) {
+  selectInstrumentLabInstrument("kick");
+}
+
+console.log("MMK INSTRUMENT LAB: selection layer ready");
+
+
+/* =========================================================
+   MMK LIVE PROJECT DASHBOARD
+   Reads existing Studio state. Does not control audio.
+   ========================================================= */
+
+function updateLiveProjectDashboard(action) {
+  const name = document.getElementById("liveProjectName");
+  const bpm = document.getElementById("liveProjectBpm");
+  const instrument = document.getElementById("liveInstrument");
+  const category = document.getElementById("liveCategory");
+  const timelineState = document.getElementById("liveTimelineState");
+  const autosave = document.getElementById("liveAutosaveState");
+  const lastAction = document.getElementById("liveLastAction");
+
+  if (name) {
+    name.textContent = project.name || "Untitled MMK Project";
+  }
+
+  if (bpm) {
+    bpm.textContent = Number(project.bpm) || 90;
+  }
+
+  if (instrument) {
+    instrument.textContent =
+      typeof instrumentLabState !== "undefined"
+        ? String(instrumentLabState.instrument || "NONE").toUpperCase()
+        : "NONE";
+  }
+
+  if (category) {
+    category.textContent =
+      typeof instrumentLabState !== "undefined"
+        ? String(instrumentLabState.category || "NONE").toUpperCase()
+        : "NONE";
+  }
+
+  if (timelineState) {
+    timelineState.textContent =
+      typeof timelinePlaying !== "undefined" && timelinePlaying
+        ? "PLAYING"
+        : "READY";
+  }
+
+  if (autosave) {
+    autosave.textContent = autosaveEnabled ? "ON" : "OFF";
+  }
+
+  if (action && lastAction) {
+    lastAction.textContent = action;
+  }
+}
+
+setInterval(() => {
+  updateLiveProjectDashboard();
+}, 500);
+
+updateLiveProjectDashboard("Studio ready");
+
+console.log("MMK LIVE PROJECT DASHBOARD: LIVE");
+
+/* =========================================================
+   MMK LIVE PROJECT FLOW — STATE DISPLAY
+   Display layer only. Does not control audio transport.
+   ========================================================= */
+
+function updateLiveProjectFlow(action) {
+  const nodes = document.querySelectorAll(".flow-node");
+
+  let activeStage = "project";
+
+  if (
+    typeof timelinePlaying !== "undefined" &&
+    timelinePlaying
+  ) {
+    activeStage = "timeline";
+  } else if (
+    typeof instrumentLabState !== "undefined" &&
+    instrumentLabState.instrument
+  ) {
+    activeStage = "instrument";
+  }
+
+  nodes.forEach(node => {
+    node.classList.toggle(
+      "active",
+      node.dataset.flow === activeStage
+    );
+  });
+
+  const projectName = document.getElementById("liveProjectName");
+  const bpm = document.getElementById("liveProjectBpm");
+  const instrument = document.getElementById("liveInstrument");
+  const timelineState = document.getElementById("liveTimelineState");
+  const autosave = document.getElementById("liveAutosaveState");
+  const currentWork = document.getElementById("liveCurrentWork");
+  const lastAction = document.getElementById("liveLastAction");
+
+  if (projectName) {
+    projectName.textContent =
+      project.name || "Untitled MMK Project";
+  }
+
+  if (bpm) {
+    bpm.textContent =
+      (Number(project.bpm) || 90) + " BPM";
+  }
+
+  if (instrument) {
+    instrument.textContent =
+      typeof instrumentLabState !== "undefined"
+        ? String(
+            instrumentLabState.instrument || "NONE"
+          ).toUpperCase()
+        : "NONE";
+  }
+
+  if (timelineState) {
+    timelineState.textContent =
+      typeof timelinePlaying !== "undefined" &&
+      timelinePlaying
+        ? "PLAYING"
+        : "READY";
+  }
+
+  if (autosave) {
+    autosave.textContent =
+      autosaveEnabled ? "AUTO-SAVE ON" : "AUTO-SAVE OFF";
+  }
+
+  if (currentWork) {
+    const currentInstrument =
+      typeof instrumentLabState !== "undefined"
+        ? String(
+            instrumentLabState.instrument || "NONE"
+          ).toUpperCase()
+        : "NONE";
+
+    const currentCategory =
+      typeof instrumentLabState !== "undefined"
+        ? String(
+            instrumentLabState.category || "NONE"
+          ).toUpperCase()
+        : "NONE";
+
+    currentWork.textContent =
+      currentInstrument + " • " + currentCategory;
+  }
+
+  if (action && lastAction) {
+    lastAction.textContent = action;
+  }
+}
+
+setInterval(() => {
+  updateLiveProjectFlow();
+}, 500);
+
+updateLiveProjectFlow("Studio ready");
+
+console.log("MMK LIVE PROJECT FLOW: CONNECTED");
+
+
+/* =========================================================
+   MMK AI MUSIC LAB — CONTROL LAYER
+   UI interaction only. No external AI/API yet.
+   ========================================================= */
+
+const aiMusicLabState = {
+  tool: null
+};
+
+const aiToolPrompts = {
+  hook: "What is the song about? Give me a strong hip-hop hook idea.",
+  verse: "What is the story? Give me a verse concept with strong imagery and rhyme ideas.",
+  chorus: "What emotion should the chorus create? Build a memorable chorus concept.",
+  structure: "Help me structure this song from intro to outro.",
+  style: "Describe the sound, mood, tempo and production style for this song.",
+  beat: "Describe a hip-hop beat idea that fits this project.",
+  automation: "What Studio tasks should be automated for this project?",
+  brain: "Analyze the current project and suggest the next best creative step."
+};
+
+function selectAITool(tool) {
+  if (!aiToolPrompts[tool]) return;
+
+  aiMusicLabState.tool = tool;
+
+  document.querySelectorAll(".ai-tool").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.aiTool === tool
+    );
+  });
+
+  const title = document.getElementById("aiWorkspaceTitle");
+  const prompt = document.getElementById("aiPrompt");
+  const status = document.getElementById("aiMusicLabStatus");
+
+  const names = {
+    hook: "AI Hook Generator",
+    verse: "AI Verse Assistant",
+    chorus: "AI Chorus Builder",
+    structure: "AI Song Structure",
+    style: "AI Style Director",
+    beat: "AI Beat Ideas",
+    automation: "Studio Automation",
+    brain: "MMK Project Brain"
+  };
+
+  if (title) {
+    title.textContent = names[tool] || "AI Workspace";
+  }
+
+  if (prompt) {
+    prompt.value = aiToolPrompts[tool];
+  }
+
+  if (status) {
+    status.textContent = tool.toUpperCase() + " READY";
+  }
+
+  if (typeof updateLiveProjectDashboard === "function") {
+    updateLiveProjectDashboard("AI " + tool.toUpperCase() + " selected");
+  }
+
+  if (typeof updateLiveProjectFlow === "function") {
+    updateLiveProjectFlow("AI " + tool.toUpperCase() + " selected");
+  }
+}
+
+document.querySelectorAll(".ai-tool").forEach(button => {
+  button.addEventListener("click", () => {
+    selectAITool(button.dataset.aiTool);
+  });
+});
+
+const aiGenerateBtn = document.getElementById("aiGenerateBtn");
+const aiClearBtn = document.getElementById("aiClearBtn");
+
+if (aiGenerateBtn) {
+  aiGenerateBtn.addEventListener("click", () => {
+    const output = document.getElementById("aiOutput");
+    const prompt = document.getElementById("aiPrompt");
+
+    if (!output) return;
+
+    const request = prompt
+      ? prompt.value.trim()
+      : "";
+
+    if (!request) {
+      output.innerHTML =
+        "<span>Enter an idea before generating.</span>";
+      return;
+    }
+
+    output.innerHTML =
+      "<strong>AI WORKSPACE READY</strong><br>" +
+      "Your request has been captured for the AI engine.<br><br>" +
+      "<small>External AI generation will be connected in the next layer.</small>";
+
+    if (typeof updateLiveProjectFlow === "function") {
+      updateLiveProjectFlow("AI request prepared");
+    }
+  });
+}
+
+if (aiClearBtn) {
+  aiClearBtn.addEventListener("click", () => {
+    const prompt = document.getElementById("aiPrompt");
+    const output = document.getElementById("aiOutput");
+
+    if (prompt) prompt.value = "";
+    if (output) {
+      output.innerHTML =
+        "<span>AI results will appear here.</span>";
+    }
+  });
+}
+
+console.log("MMK AI MUSIC LAB: CONTROL LAYER READY");
+
+
+/* =========================================================
+   MMK AI MUSIC LAB — SAMPLE VAULT CONNECTION
+   Uses the existing MMK Audio Vault.
+   ========================================================= */
+
+const aiSamples = [];
+
+function renderAISamples() {
+  const list = document.getElementById("aiSamplesList");
+  const status = document.getElementById("aiSamplesStatus");
+
+  if (status) {
+    status.textContent =
+      aiSamples.length + " SAMPLE" +
+      (aiSamples.length === 1 ? "" : "S");
+  }
+
+  if (!list) return;
+
+  if (!aiSamples.length) {
+    list.innerHTML =
+      "<span>No samples added yet.</span>";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  aiSamples.forEach((sample, index) => {
+    const row = document.createElement("div");
+    row.className = "ai-sample-row";
+
+    row.innerHTML = `
+      <div>
+        <strong>${sample.name}</strong>
+        <small>Audio Sample ${index + 1}</small>
+      </div>
+      <button type="button" data-sample-index="${index}">
+        REMOVE
+      </button>
+    `;
+
+    row.querySelector("button").addEventListener(
+      "click",
+      () => {
+        aiSamples.splice(index, 1);
+        renderAISamples();
+      }
+    );
+
+    list.appendChild(row);
+  });
+}
+
+async function addAISamples(files) {
+  if (!files || !files.length) return;
+
+  const status = document.getElementById("aiSamplesStatus");
+
+  if (status) {
+    status.textContent = "ADDING...";
+  }
+
+  for (const file of files) {
+    try {
+      const audioId = await saveAudioBlob(
+        file,
+        file.name
+      );
+
+      aiSamples.push({
+        id: audioId,
+        name: file.name,
+        type: file.type || "audio/*"
+      });
+    } catch (error) {
+      console.error(
+        "MMK AI SAMPLE SAVE ERROR:",
+        error
+      );
+    }
+  }
+
+  renderAISamples();
+
+  if (typeof updateLiveProjectFlow === "function") {
+    updateLiveProjectFlow(
+      aiSamples.length + " sample(s) added"
+    );
+  }
+}
+
+const aiAddSamplesBtn =
+  document.getElementById("aiAddSamplesBtn");
+
+const aiSampleInput =
+  document.getElementById("aiSampleInput");
+
+if (aiAddSamplesBtn && aiSampleInput) {
+  aiAddSamplesBtn.addEventListener(
+    "click",
+    () => aiSampleInput.click()
+  );
+
+  aiSampleInput.addEventListener(
+    "change",
+    async () => {
+      await addAISamples(
+        Array.from(aiSampleInput.files || [])
+      );
+
+      aiSampleInput.value = "";
+    }
+  );
+}
+
+renderAISamples();
+
+console.log(
+  "MMK AI MUSIC LAB: SAMPLE VAULT CONNECTED"
+);
+
+
+/* =========================================================
+   MMK AI HOOK — BACKEND CONNECTION
+   ========================================================= */
+
+async function requestAIHook() {
+  const prompt = document.getElementById("aiPrompt");
+  const output = document.getElementById("aiOutput");
+  const status = document.getElementById("aiMusicLabStatus");
+
+  if (!prompt || !output) return;
+
+  const idea = prompt.value.trim();
+
+  if (!idea) {
+    output.innerHTML =
+      "<span>Write your song idea first.</span>";
+    return;
+  }
+
+  if (status) status.textContent = "GENERATING...";
+
+  output.innerHTML =
+    "<span>Connecting to MMK AI Hook Engine...</span>";
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8091/api/ai/hook",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ idea })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "AI Hook request failed."
+      );
+    }
+
+    output.innerHTML = `
+      <strong>🎤 AI HOOK REQUEST</strong>
+      <p>${data.idea}</p>
+      <small>MMK AI Hook Engine connected.</small>
+    `;
+
+    if (status) status.textContent = "CONNECTED";
+
+    if (typeof updateLiveProjectFlow === "function") {
+      updateLiveProjectFlow("AI Hook generated");
+    }
+
+  } catch (error) {
+    console.error("MMK AI HOOK ERROR:", error);
+
+    output.innerHTML =
+      "<span>AI connection failed. Check the MMK AI backend.</span>";
+
+    if (status) status.textContent = "ERROR";
+  }
+}
+
+const originalAIGenerateButton =
+  document.getElementById("aiGenerateBtn");
+
+if (originalAIGenerateButton) {
+  originalAIGenerateButton.addEventListener(
+    "click",
+    requestAIHook
+  );
+}
+
+console.log("MMK AI HOOK: BACKEND CONNECTED");
+
