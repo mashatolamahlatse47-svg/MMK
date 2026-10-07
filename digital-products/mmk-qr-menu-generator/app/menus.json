@@ -1,0 +1,14 @@
+{
+  "demo": {
+    "business_name": "MMK Demo Menu",
+    "pdf": "demo-menu.pdf"
+  },
+  "demo-cafe": {
+    "business_name": "MMK Demo Cafe",
+    "pdf": "demo-cafe-menu.pdf"
+  },
+  "mamas-kitchen": {
+    "business_name": "Mama's Kitchen",
+    "pdf": "mamas-kitchen.pdf"
+  }
+}
