@@ -149,11 +149,27 @@ Inspect implementation and determine whether it remains a laboratory or becomes 
 
 ---
 
-## 7. MMK Business Starter System
+## 7. MMK Business Starter
 
 Location: digital-products/mmk-business-starter
-Version: 1.0.0
-Status: Product work exists; release evidence incomplete.
+Version: 1.2.0
+Stage: Release verified
+Status: Completed
+
+Release:
+releases/MMK-Business-Starter-v1.2.0
+
+Package:
+releases/MMK-Business-Starter-v1.2.0.zip
+
+Evidence:
+Working product, browser testing, persistent Activity History testing, README, CUSTOMER-GUIDE, RELEASE-NOTES, TEST-RESULTS, VERSION, clean release package, backup preservation and ZIP integrity verification.
+
+Founder Final Approval:
+APPROVED
+
+Next focus:
+Publish v1.2.0 when the planned release window begins.
 
 ---
 

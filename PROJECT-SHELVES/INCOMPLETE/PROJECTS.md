@@ -21,29 +21,25 @@ Projects that exist but have remaining development, testing, release or verifica
 6. MMK API Lab
    - Location: software/mmk-api-lab
 
-7. MMK Business Starter System
-   - Location: digital-products/mmk-business-starter
-   - Version: 1.0.0
-
-8. MMK Business Starter Pack
+7. MMK Business Starter Pack
    - Location: digital-products/MMK-Business-Starter-Pack
    - Version: 1.0
 
-9. Business Starter Pack
+8. Business Starter Pack
    - Location: digital-products/business-starter-pack
    - Version: 1.0
 
-10. MMK Art Gallery Pack
+9. MMK Art Gallery Pack
     - Location: digital-products/art-gallery-pack
 
-11. MMK Clothing Store
+10. MMK Clothing Store
     - Location: digital-products/clothing-store
 
-12. MMK Grocery System
+11. MMK Grocery System
     - Location: digital-products/grocery-system
 
-13. MMK Invoice Pack
+12. MMK Invoice Pack
     - Location: digital-products/invoice-pack
 
-14. MMK Social Media Pack
+13. MMK Social Media Pack
     - Location: digital-products/social-media-pack
