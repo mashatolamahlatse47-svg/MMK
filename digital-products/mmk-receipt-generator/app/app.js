@@ -16,6 +16,11 @@ function addItem(name = "", quantity = 1, price = 0) {
     generateReceipt();
   });
 
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", generateReceipt);
+    input.addEventListener("change", generateReceipt);
+  });
+
   itemsContainer.appendChild(row);
 }
 
@@ -31,7 +36,14 @@ function generateReceipt() {
   const customer = document.getElementById("customerName").value.trim();
   const payment = document.getElementById("paymentMethod").value;
   const reference = document.getElementById("paymentReference").value.trim();
-  const discount = Number(document.getElementById("discount").value) || 0;
+  const discount = Math.max(
+    0,
+    Number(document.getElementById("discount").value) || 0
+  );
+  const amountPaid = Math.max(
+    0,
+    Number(document.getElementById("amountPaid").value) || 0
+  );
 
   document.getElementById("outBusiness").textContent =
     business || "Your Business";
@@ -68,11 +80,16 @@ function generateReceipt() {
     output.appendChild(tr);
   });
 
-  const finalTotal = Math.max(0, subtotal - discount);
+  const amountDue = Math.max(0, subtotal - discount);
+  const change = Math.max(0, amountPaid - amountDue);
+  const amountOwing = Math.max(0, amountDue - amountPaid);
 
   document.getElementById("outSubtotal").textContent = money(subtotal);
   document.getElementById("outDiscount").textContent = money(discount);
-  document.getElementById("outTotal").textContent = money(finalTotal);
+  document.getElementById("outTotal").textContent = money(amountDue);
+  document.getElementById("outAmountPaid").textContent = money(amountPaid);
+  document.getElementById("outChange").textContent = money(change);
+  document.getElementById("outAmountOwing").textContent = money(amountOwing);
 }
 
 document.getElementById("addItem").addEventListener("click", () => {
@@ -80,6 +97,22 @@ document.getElementById("addItem").addEventListener("click", () => {
 });
 
 document.getElementById("generate").addEventListener("click", generateReceipt);
+
+[
+  "businessName",
+  "businessPhone",
+  "receiptNumber",
+  "receiptDate",
+  "customerName",
+  "paymentMethod",
+  "paymentReference",
+  "discount",
+  "amountPaid"
+].forEach(id => {
+  const field = document.getElementById(id);
+  field.addEventListener("input", generateReceipt);
+  field.addEventListener("change", generateReceipt);
+});
 
 document.getElementById("print").addEventListener("click", () => {
   generateReceipt();

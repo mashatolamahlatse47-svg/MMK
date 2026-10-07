@@ -1,6 +1,6 @@
 # MMK Receipt Generator
 
-Version 1.0.0
+Version 1.1.0
 
 ## What It Does
 
@@ -57,4 +57,4 @@ Working browser prototype tested on Android.
 BUILD → CHECK → TEST → FIX → TEST AGAIN → PACKAGE → PRESERVE
 
 © MMK Digital Products
-Version 1.0.0
+Version 1.1.0
