@@ -14,16 +14,29 @@ Netlify
 
 ## Publishing Status
 
-READY FOR DEPLOYMENT
+PUBLISHED / LIVE
 
-## Required Before Public Launch
+## Live URL
 
-1. Deploy the release package to Netlify.
-2. Open the live HTTPS URL.
-3. Test the live application on an Android phone.
-4. Record the final live URL in the README.
-5. Preserve the deployment information with the release.
+https://mmk-receipt-generator.netlify.app
 
-## Important
+## Deployment
 
-Do not publish development backups or unrelated MMK files.
+The production application is deployed from the `app/` directory only.
+
+Development backups, documentation, and unrelated MMK files are not part of the public deployment.
+
+## Final Verification
+
+- Draft deployment: PASS
+- Production deployment: PASS
+- Android browser test: PASS
+- Receipt calculation test: PASS
+- PDF / Print test: PASS
+- Version footer: PASS — Version 1.1.0
+
+## Preservation
+
+The release package is preserved as:
+
+`MMK-Receipt-Generator-v1.1.0.zip`

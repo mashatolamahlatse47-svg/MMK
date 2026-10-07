@@ -50,7 +50,11 @@ Total Paid = R80.00
 
 ## Product Status
 
-Working browser prototype tested on Android.
+Official MMK v1.1.0 release.
+
+- Android browser test: PASS
+- Netlify production deployment: LIVE
+- Live application: https://mmk-receipt-generator.netlify.app
 
 ## MMK Product Lifecycle
 
