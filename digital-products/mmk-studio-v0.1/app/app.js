@@ -109,6 +109,11 @@ async function deleteAudioBlob(id) {
 
 
 let beatTimer = null;
+let beatSchedulerTimer = null;
+let beatNextTime = 0;
+let masterTransportState = "stopped";
+let masterProjectPosition = 0;
+let masterProjectLength = 300;
 let currentStep = -1;
 let mediaRecorder = null;
 let recordingChunks = [];
@@ -239,8 +244,6 @@ function playStep(step) {
 }
 
 async function startBeat() {
-  stopBeat();
-
   const ctx = getAudioContext();
 
   if (ctx.state === "suspended") {
@@ -249,28 +252,158 @@ async function startBeat() {
 
   if (ctx.state !== "running") {
     console.error("MMK AudioContext not running:", ctx.state);
+    setTimelineStatus("Audio engine is not running");
     return;
   }
 
   const bpm = Math.max(40, Math.min(220, Number(bpmEl.value) || 90));
   project.bpm = bpm;
 
-  let step = 0;
-  const interval = 60000 / bpm / 4;
+  stopBeat();
 
-  playStep(step);
+  masterTransportState = "playing";
+  masterProjectPosition = 0;
+  masterProjectLength = 300;
 
-  beatTimer = setInterval(() => {
-    step = (step + 1) % 16;
-    playStep(step);
-  }, interval);
+  const stepDuration = 60 / bpm / 4;
+  const lookAhead = 0.1;
+  const schedulerInterval = 25;
+
+  beatNextTime = ctx.currentTime + 0.05;
+
+  function scheduleBeat() {
+    if (masterTransportState !== "playing") return;
+
+    while (
+      beatNextTime < ctx.currentTime + lookAhead &&
+      masterProjectPosition < masterProjectLength
+    ) {
+      const step = Math.floor(masterProjectPosition / stepDuration) % 16;
+
+      playStep(step);
+
+      masterProjectPosition += stepDuration;
+      beatNextTime += stepDuration;
+    }
+
+    if (masterProjectPosition >= masterProjectLength) {
+      stopBeat();
+      setTimelineStatus("5-minute project finished");
+      return;
+    }
+
+    beatSchedulerTimer = setTimeout(scheduleBeat, schedulerInterval);
+  }
+
+  scheduleBeat();
+  setTimelineStatus("Playing • 0:00 / 5:00");
+}
+
+function pauseBeat() {
+  if (masterTransportState !== "playing") return;
+
+  masterTransportState = "paused";
+
+  if (beatSchedulerTimer) {
+    clearTimeout(beatSchedulerTimer);
+    beatSchedulerTimer = null;
+  }
+
+  setTimelineStatus(
+    "Paused • " +
+    formatTransportTime(masterProjectPosition) +
+    " / 5:00"
+  );
+}
+
+async function resumeBeat() {
+  if (masterTransportState !== "paused") {
+    return startBeat();
+  }
+
+  const ctx = getAudioContext();
+
+  if (ctx.state === "suspended") {
+    await ctx.resume();
+  }
+
+  if (ctx.state !== "running") {
+    setTimelineStatus("Audio engine is not running");
+    return;
+  }
+
+  const bpm = Math.max(40, Math.min(220, Number(bpmEl.value) || 90));
+  project.bpm = bpm;
+
+  const stepDuration = 60 / bpm / 4;
+  const lookAhead = 0.1;
+  const schedulerInterval = 25;
+
+  masterTransportState = "playing";
+  beatNextTime = ctx.currentTime + 0.05;
+
+  function scheduleBeat() {
+    if (masterTransportState !== "playing") return;
+
+    while (
+      beatNextTime < ctx.currentTime + lookAhead &&
+      masterProjectPosition < masterProjectLength
+    ) {
+      const step = Math.floor(masterProjectPosition / stepDuration) % 16;
+
+      playStep(step);
+
+      masterProjectPosition += stepDuration;
+      beatNextTime += stepDuration;
+    }
+
+    if (masterProjectPosition >= masterProjectLength) {
+      stopBeat();
+      setTimelineStatus("5-minute project finished");
+      return;
+    }
+
+    beatSchedulerTimer = setTimeout(scheduleBeat, schedulerInterval);
+  }
+
+  scheduleBeat();
+
+  setTimelineStatus(
+    "Playing • " +
+    formatTransportTime(masterProjectPosition) +
+    " / 5:00"
+  );
+}
+
+function formatTransportTime(seconds) {
+  const safe = Math.max(0, Number(seconds) || 0);
+  const minutes = Math.floor(safe / 60);
+  const secs = Math.floor(safe % 60);
+
+  return minutes + ":" + String(secs).padStart(2, "0");
 }
 
 function stopBeat() {
-  if (beatTimer) clearInterval(beatTimer);
-  beatTimer = null;
+  if (beatTimer) {
+    clearInterval(beatTimer);
+    beatTimer = null;
+  }
+
+  if (beatSchedulerTimer) {
+    clearTimeout(beatSchedulerTimer);
+    beatSchedulerTimer = null;
+  }
+
+  masterTransportState = "stopped";
+  masterProjectPosition = 0;
+  beatNextTime = 0;
   currentStep = -1;
-  document.querySelectorAll(".step").forEach(b => b.classList.remove("current"));
+
+  document
+    .querySelectorAll(".step")
+    .forEach(b => b.classList.remove("current"));
+
+  setTimelineStatus("Stopped • 0:00 / 5:00");
 }
 
 function renderPattern() {
@@ -1262,7 +1395,14 @@ document.addEventListener("click", e => {
   const action = e.target.dataset.action;
   if (!action) return;
 
-  if (action === "play") startBeat();
+  if (action === "play") {
+    if (masterTransportState === "paused") {
+      resumeBeat();
+    } else {
+      startBeat();
+    }
+  }
+
   if (action === "stop") stopBeat();
   if (action === "new-beat") randomBeat();
   if (action === "samples") showSamples();
