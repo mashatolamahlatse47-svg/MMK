@@ -315,9 +315,18 @@ function randomBeat() {
 }
 
 function drawWaveform(audioData = null) {
-  const ctx = canvas.getContext("2d");
-  const w = canvas.width;
-  const h = canvas.height;
+  // The workspace can be replaced by screens such as Projects.
+  // Always find the current waveform canvas instead of using a stale reference.
+  const currentCanvas = document.getElementById("waveform");
+
+  if (!currentCanvas) {
+    console.warn("MMK waveform canvas is not currently available.");
+    return;
+  }
+
+  const ctx = currentCanvas.getContext("2d");
+  const w = currentCanvas.width;
+  const h = currentCanvas.height;
   ctx.clearRect(0,0,w,h);
 
   ctx.strokeStyle = "#b8860b";
@@ -510,45 +519,36 @@ function getProjectLibrary() {
 }
 
 function saveProjectToLibrary(type="project", showMessage=true) {
-  const snapshot = getStudioSnapshot();
   const library = getProjectLibrary();
 
+  // Give the project its permanent library ID BEFORE creating the snapshot.
+  if (!project.libraryId) {
+    project.libraryId =
+      "mmk-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+  }
+
+  const snapshot = getStudioSnapshot();
   const collection = type === "draft" ? library.drafts : library.projects;
-  const existingId = project.libraryId || null;
+  const existingId = project.libraryId;
 
-  if (existingId) {
-    const index = collection.findIndex(item => item.id === existingId);
+  const index = collection.findIndex(item => item.id === existingId);
 
-    if (index >= 0) {
-      collection[index] = {
-        ...collection[index],
-        ...snapshot,
-        id: existingId,
-        type
-      };
-    } else {
-      collection.unshift({
-        ...snapshot,
-        id: existingId,
-        type
-      });
-    }
+  const entry = {
+    ...snapshot,
+    project: JSON.parse(JSON.stringify(snapshot.project)),
+    id: existingId,
+    type
+  };
+
+  if (index >= 0) {
+    collection[index] = entry;
   } else {
-    const id = "mmk-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
-
-    project.libraryId = id;
-
-    collection.unshift({
-      ...snapshot,
-      project: JSON.parse(JSON.stringify(project)),
-      id,
-      type
-    });
+    collection.unshift(entry);
   }
 
   localStorage.setItem("mmkStudioLibrary", JSON.stringify(library));
 
-  // Keep the latest project available for compatibility and recovery.
+  // Keep the latest complete snapshot for fast startup recovery.
   localStorage.setItem("mmkStudioProject", JSON.stringify(snapshot));
 
   if (showMessage) {
@@ -816,15 +816,131 @@ function renderLibrarySection(type) {
                 <small>${type === "draft" ? "Draft" : "Saved"} • ${escapeHtml(savedAt)}</small>
               </div>
 
-              <button class="open-library-item" data-id="${escapeHtml(item.id)}" data-type="${type}">
-                OPEN
-              </button>
+              <div class="library-item-actions">
+                <button class="play-library-item" data-id="${escapeHtml(item.id)}" data-type="${type}">
+                  ▶ PLAY
+                </button>
+
+                <button class="save-library-file" data-id="${escapeHtml(item.id)}" data-type="${type}">
+                  💾 FILE
+                </button>
+
+                <button class="open-library-item" data-id="${escapeHtml(item.id)}" data-type="${type}">
+                  OPEN
+                </button>
+
+                <button class="delete-library-item" data-id="${escapeHtml(item.id)}" data-type="${type}">
+                  🗑 DELETE
+                </button>
+              </div>
             </div>
           `;
         }).join("")}
       </div>
     </section>
   `;
+}
+
+async function exportLibraryItem(id, type) {
+  const library = getProjectLibrary();
+  const collection = type === "draft" ? library.drafts : library.projects;
+  const item = collection.find(entry => entry.id === id);
+
+  if (!item || !item.project || !item.pattern) {
+    alert("MMK Studio could not export this item.");
+    return;
+  }
+
+  try {
+    const projectData = JSON.stringify({
+      ...item,
+      mmkStudio: "MMK Studio",
+      version: "0.4.1",
+      exportedAt: new Date().toISOString()
+    }, null, 2);
+
+    const name = item.project.name || "Untitled MMK Project";
+    const fileName =
+      safeName(name) + "-MMK-Studio-project.mmkstudio";
+
+    const blob = new Blob([projectData], {
+      type: "application/octet-stream"
+    });
+
+    if (
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      typeof File !== "undefined"
+    ) {
+      const file = new File(
+        [blob],
+        fileName,
+        { type: "application/octet-stream" }
+      );
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "MMK Studio Project",
+          text: name,
+          files: [file]
+        });
+
+        setTimelineStatus("Project saved to Files/share");
+        return;
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    setTimelineStatus("Project file saved");
+    alert("MMK project file saved.");
+  } catch (error) {
+    console.error("MMK library file export error:", error);
+    alert("MMK Studio could not save this project to Files.");
+  }
+}
+
+function deleteLibraryItem(id, type) {
+  const library = getProjectLibrary();
+  const collection = type === "draft" ? library.drafts : library.projects;
+  const index = collection.findIndex(entry => entry.id === id);
+
+  if (index < 0) {
+    alert("MMK Studio could not find this saved item.");
+    return;
+  }
+
+  const item = collection[index];
+  const name = item.project?.name || "Untitled MMK Project";
+  const kind = type === "draft" ? "draft" : "project";
+
+  const confirmed = confirm(
+    'Delete "' + name + '" from MMK Studio ' + kind + 's?\n\n' +
+    "This removes the Library copy only. A file you already exported to your device will not be deleted."
+  );
+
+  if (!confirmed) return;
+
+  collection.splice(index, 1);
+  localStorage.setItem("mmkStudioLibrary", JSON.stringify(library));
+
+  const currentId = project && project.libraryId;
+
+  if (currentId === id) {
+    localStorage.removeItem("mmkStudioProject");
+  }
+
+  showProjects();
+  setTimelineStatus("Library item deleted");
 }
 
 function showProjects() {
@@ -850,6 +966,78 @@ function showProjects() {
     saveProject();
     showProjects();
   };
+
+  document.querySelectorAll(".play-library-item").forEach(button => {
+    button.onclick = async () => {
+      const id = button.dataset.id;
+      const type = button.dataset.type;
+      const library = getProjectLibrary();
+      const collection = type === "draft" ? library.drafts : library.projects;
+      const item = collection.find(entry => entry.id === id);
+
+      if (!item || !item.project || !item.pattern) {
+        alert("MMK Studio could not preview this project.");
+        return;
+      }
+
+      stopBeat();
+
+      const originalPattern = pattern;
+      const originalBpm = bpmEl.value;
+
+      try {
+        pattern = JSON.parse(JSON.stringify(item.pattern));
+        bpmEl.value = Number(item.project.bpm) || 90;
+
+        await startBeat();
+
+        setTimelineStatus(
+          type === "draft"
+            ? "Playing draft preview"
+            : "Playing project preview"
+        );
+
+        button.textContent = "■ STOP";
+
+        const previewDuration =
+          Math.max(4, Math.min(30, 60000 / (Number(bpmEl.value) || 90) * 16 / 1000));
+
+        setTimeout(() => {
+          stopBeat();
+          pattern = originalPattern;
+          bpmEl.value = originalBpm;
+          button.textContent = "▶ PLAY";
+          setTimelineStatus("Preview stopped");
+        }, previewDuration * 1000);
+
+      } catch (error) {
+        console.error("MMK library preview error:", error);
+        stopBeat();
+        pattern = originalPattern;
+        bpmEl.value = originalBpm;
+        button.textContent = "▶ PLAY";
+        alert("MMK Studio could not preview this project.");
+      }
+    };
+  });
+
+  document.querySelectorAll(".save-library-file").forEach(button => {
+    button.onclick = () => {
+      exportLibraryItem(
+        button.dataset.id,
+        button.dataset.type
+      );
+    };
+  });
+
+  document.querySelectorAll(".delete-library-item").forEach(button => {
+    button.onclick = () => {
+      deleteLibraryItem(
+        button.dataset.id,
+        button.dataset.type
+      );
+    };
+  });
 
   document.querySelectorAll(".open-library-item").forEach(button => {
     button.onclick = () => {
@@ -880,14 +1068,45 @@ function showProjects() {
   });
 }
 
-function loadLibraryItem(id, type) {
+async function loadLibraryItem(id, type) {
   const library = getProjectLibrary();
   const collection = type === "draft" ? library.drafts : library.projects;
   const item = collection.find(entry => entry.id === id);
 
-  if (!item) return false;
+  if (!item) {
+    alert("MMK DEBUG: saved item was not found.");
+    return false;
+  }
 
-  return applyProjectData(item);
+  const normalized = {
+    ...item,
+    project: item.project || null,
+    pattern: item.pattern || null,
+    timeline: item.timeline || null,
+    clips: Array.isArray(item.clips) ? item.clips : []
+  };
+
+  if (!normalized.project || !normalized.pattern) {
+    alert(
+      "MMK DEBUG: incomplete project\\n" +
+      "project: " + !!normalized.project + "\\n" +
+      "pattern: " + !!normalized.pattern + "\\n" +
+      "timeline: " + !!normalized.timeline + "\\n" +
+      "clips: " + normalized.clips.length
+    );
+    return false;
+  }
+
+  try {
+    return await applyProjectData(normalized);
+  } catch (error) {
+    console.error("MMK project open error:", error);
+    alert(
+      "MMK DEBUG OPEN ERROR:\\n" +
+      (error && error.message ? error.message : String(error))
+    );
+    return false;
+  }
 }
 
 async function applyProjectData(data) {
@@ -949,15 +1168,51 @@ async function applyProjectData(data) {
   return true;
 }
 async function loadProject() {
-  const saved = localStorage.getItem("mmkStudioProject");
-  if (!saved) return false;
-
+  // First try the latest complete project snapshot.
   try {
-    const data = JSON.parse(saved);
-    return await applyProjectData(data);
-  } catch (_) {
-    return false;
+    const saved = localStorage.getItem("mmkStudioProject");
+
+    if (saved) {
+      const data = JSON.parse(saved);
+
+      if (await applyProjectData(data)) {
+        setTimelineStatus("Project restored");
+        return true;
+      }
+    }
+  } catch (error) {
+    console.warn("MMK latest project recovery failed:", error);
   }
+
+  // Recovery path: restore the newest saved project from the library.
+  try {
+    const library = getProjectLibrary();
+    const allItems = [
+      ...library.projects,
+      ...library.drafts
+    ].filter(item => item && item.project && item.pattern);
+
+    allItems.sort((a, b) =>
+      String(b.savedAt || "").localeCompare(String(a.savedAt || ""))
+    );
+
+    if (allItems.length) {
+      const recovered = await applyProjectData(allItems[0]);
+
+      if (recovered) {
+        localStorage.setItem(
+          "mmkStudioProject",
+          JSON.stringify(allItems[0])
+        );
+        setTimelineStatus("Project recovered from library");
+        return true;
+      }
+    }
+  } catch (error) {
+    console.warn("MMK library recovery failed:", error);
+  }
+
+  return false;
 }
 
 function newProject() {
