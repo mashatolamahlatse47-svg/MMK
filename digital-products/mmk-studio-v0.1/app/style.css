@@ -386,6 +386,13 @@ footer{
   border-color: #d4af37;
 }
 
+.instrument-pad.active {
+  border-color: #d4af37;
+  background: #8b6d12;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25);
+}
+
 .instrument-bank[hidden] {
   display: none;
 }

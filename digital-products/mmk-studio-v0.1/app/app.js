@@ -162,6 +162,53 @@ function playTone(freq, duration, type="sine", volume=0.08) {
   osc.stop(ctx.currentTime + duration);
 }
 
+
+function playPianoNote(freq, duration = 0.9, volume = 0.16) {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+
+  const master = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+
+  master.gain.setValueAtTime(0.001, now);
+  master.gain.exponentialRampToValueAtTime(volume, now + 0.008);
+  master.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(Math.min(4200, freq * 8), now);
+  filter.Q.value = 0.7;
+
+  master.connect(filter);
+  filter.connect(ctx.destination);
+
+  const harmonics = [
+    { multiple: 1, gain: 1.00 },
+    { multiple: 2, gain: 0.42 },
+    { multiple: 3, gain: 0.20 },
+    { multiple: 4, gain: 0.10 }
+  ];
+
+  harmonics.forEach(({ multiple, gain: harmonicGain }) => {
+    const osc = ctx.createOscillator();
+    const partial = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq * multiple, now);
+
+    partial.gain.setValueAtTime(harmonicGain, now);
+    partial.gain.exponentialRampToValueAtTime(
+      0.001,
+      now + duration
+    );
+
+    osc.connect(partial);
+    partial.connect(master);
+
+    osc.start(now);
+    osc.stop(now + duration + 0.02);
+  });
+}
+
 function playKick() {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
@@ -1810,7 +1857,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
 const instrumentLabState = {
   category: "drums",
   instrument: "kick",
-  playing: false
+  playing: false,
+  activeInstruments: new Set(["kick", "snare", "hat"])
 };
 
 const instrumentLabPatterns = {
@@ -1891,7 +1939,22 @@ document.querySelectorAll("[data-instrument-category]").forEach(button => {
 
 document.querySelectorAll(".instrument-pad").forEach(button => {
   button.addEventListener("click", () => {
-    selectInstrumentLabInstrument(button.dataset.instrument);
+    const instrument = button.dataset.instrument;
+
+    if (instrumentLabState.activeInstruments.has(instrument)) {
+      instrumentLabState.activeInstruments.delete(instrument);
+      button.classList.remove("active");
+    } else {
+      instrumentLabState.activeInstruments.add(instrument);
+      button.classList.add("active");
+    }
+
+    instrumentLabState.instrument = instrument;
+
+    updateInstrumentLabStatus(
+      instrument.toUpperCase() +
+      (instrumentLabState.activeInstruments.has(instrument) ? " ON" : " OFF")
+    );
   });
 });
 
@@ -1900,11 +1963,253 @@ const firstInstrumentPad = document.querySelector(
 );
 
 if (firstInstrumentPad) {
-  selectInstrumentLabInstrument("kick");
+  document.querySelectorAll(".instrument-pad").forEach(button => {
+    button.classList.toggle(
+      "active",
+      instrumentLabState.activeInstruments.has(button.dataset.instrument)
+    );
+  });
+
+  updateInstrumentLabStatus("DRUMS READY • KICK / SNARE / HI-HAT ON");
 }
 
 console.log("MMK INSTRUMENT LAB: selection layer ready");
 
+function playInstrumentLabSound(instrument) {
+  switch (instrument) {
+    case "kick":
+      playKick();
+      break;
+    case "snare":
+      playSnare();
+      break;
+    case "hat":
+      playHat();
+      break;
+    case "clap":
+      playClap();
+      break;
+    case "perc":
+      playPerc();
+      break;
+    case "bass-1":
+      playTone(82.41, 0.35, "sawtooth", 0.12);
+      break;
+    case "bass-2":
+      playTone(110.00, 0.35, "square", 0.10);
+      break;
+    case "guitar-1":
+      playTone(196.00, 0.45, "triangle", 0.10);
+      break;
+    case "guitar-2":
+      playTone(246.94, 0.45, "triangle", 0.10);
+      break;
+    case "piano":
+      playPianoNote(261.63, 0.9, 0.14);
+      break;
+    case "synth":
+      playTone(329.63, 0.5, "sawtooth", 0.08);
+      break;
+    case "organ":
+      playTone(392.00, 0.7, "sine", 0.10);
+      break;
+  }
+}
+
+function playInstrumentLabStep(step) {
+  instrumentLabState.activeInstruments.forEach(instrument => {
+    const instrumentPattern = instrumentLabPatterns[instrument];
+
+    if (instrumentPattern && instrumentPattern[step]) {
+      playInstrumentLabSound(instrument);
+    }
+  });
+}
+
+let instrumentLabTimer = null;
+let instrumentLabStep = 0;
+let instrumentLabNextTime = 0;
+let instrumentLabPlaying = false;
+
+function instrumentLabStepDuration() {
+  const bpm = Number(project.bpm) || 90;
+  return 60 / bpm / 4;
+}
+
+function scheduleInstrumentLab() {
+  if (!instrumentLabPlaying) return;
+
+  const ctx = getAudioContext();
+  const lookAhead = 0.1;
+
+  while (instrumentLabNextTime < ctx.currentTime + lookAhead) {
+    const step = instrumentLabStep;
+
+    window.setTimeout(() => {
+      if (instrumentLabPlaying) {
+        playInstrumentLabStep(step);
+      }
+    }, Math.max(0, (instrumentLabNextTime - ctx.currentTime) * 1000));
+
+    instrumentLabStep = (instrumentLabStep + 1) % 16;
+    instrumentLabNextTime += instrumentLabStepDuration();
+  }
+}
+
+function startInstrumentLab() {
+  if (instrumentLabPlaying) return;
+
+  const ctx = getAudioContext();
+
+  instrumentLabPlaying = true;
+  instrumentLabStep = 0;
+  instrumentLabNextTime = ctx.currentTime;
+
+  instrumentLabTimer = window.setInterval(
+    scheduleInstrumentLab,
+    25
+  );
+
+  scheduleInstrumentLab();
+
+  updateInstrumentLabStatus("PLAYING • 16-STEP PATTERN");
+}
+
+function stopInstrumentLab() {
+  instrumentLabPlaying = false;
+
+  if (instrumentLabTimer) {
+    window.clearInterval(instrumentLabTimer);
+    instrumentLabTimer = null;
+  }
+
+  instrumentLabStep = 0;
+  updateInstrumentLabStatus("STOPPED");
+}
+
+const instrumentPlayButton = document.getElementById("instrumentPlayBtn");
+const instrumentStopButton = document.getElementById("instrumentStopBtn");
+
+if (instrumentPlayButton) {
+  instrumentPlayButton.addEventListener("click", startInstrumentLab);
+}
+
+if (instrumentStopButton) {
+  instrumentStopButton.addEventListener("click", stopInstrumentLab);
+}
+
+console.log("MMK INSTRUMENT LAB: automatic sequencer ready");
+
+
+
+const pianoKeyboardState = {
+  activeNotes: new Map(),
+  playing: false,
+  timer: null,
+  step: 0
+};
+
+function togglePianoNote(button) {
+  if (!button) return;
+
+  const note = button.dataset.note;
+  const freq = Number(button.dataset.freq);
+
+  if (!note || !Number.isFinite(freq)) return;
+
+  if (pianoKeyboardState.activeNotes.has(note)) {
+    pianoKeyboardState.activeNotes.delete(note);
+    button.classList.remove("active");
+    updateInstrumentLabStatus(note + " OFF");
+    return;
+  }
+
+  pianoKeyboardState.activeNotes.set(note, freq);
+  button.classList.add("active");
+  updateInstrumentLabStatus(note + " ON");
+}
+
+function playSelectedPianoNotes() {
+  pianoKeyboardState.activeNotes.forEach(freq => {
+    playPianoNote(freq, 0.7, 0.12);
+  });
+}
+
+function startPianoAutomation() {
+  if (pianoKeyboardState.playing) return;
+
+  if (pianoKeyboardState.activeNotes.size === 0) {
+    updateInstrumentLabStatus("PIANO • choose notes first");
+    return;
+  }
+
+  pianoKeyboardState.playing = true;
+  pianoKeyboardState.step = 0;
+
+  playSelectedPianoNotes();
+
+  const intervalMs =
+    ((60 / (Number(project.bpm) || 90)) / 2) * 1000;
+
+  pianoKeyboardState.timer = window.setInterval(() => {
+    if (!pianoKeyboardState.playing) return;
+
+    playSelectedPianoNotes();
+    pianoKeyboardState.step += 1;
+  }, intervalMs);
+
+  updateInstrumentLabStatus("PIANO • AUTOMATION PLAYING");
+}
+
+function stopPianoAutomation() {
+  pianoKeyboardState.playing = false;
+
+  if (pianoKeyboardState.timer) {
+    window.clearInterval(pianoKeyboardState.timer);
+    pianoKeyboardState.timer = null;
+  }
+
+  pianoKeyboardState.step = 0;
+  updateInstrumentLabStatus("PIANO • READY");
+}
+
+document.querySelectorAll(".piano-key").forEach(button => {
+  button.addEventListener("pointerdown", event => {
+    event.preventDefault();
+    togglePianoNote(button);
+  });
+});
+
+
+const pianoPlayButton = document.getElementById("pianoPlayBtn");
+const pianoStopButton = document.getElementById("pianoStopBtn");
+const pianoAutomationStatus =
+  document.getElementById("pianoAutomationStatus");
+
+function updatePianoAutomationStatus(message) {
+  if (pianoAutomationStatus) {
+    pianoAutomationStatus.textContent = message;
+  }
+}
+
+if (pianoPlayButton) {
+  pianoPlayButton.addEventListener("click", () => {
+    startPianoAutomation();
+
+    if (pianoKeyboardState.playing) {
+      updatePianoAutomationStatus("PLAYING");
+    }
+  });
+}
+
+if (pianoStopButton) {
+  pianoStopButton.addEventListener("click", () => {
+    stopPianoAutomation();
+    updatePianoAutomationStatus("STOPPED");
+  });
+}
+
+console.log("MMK PIANO KEYBOARD: persistent note automation ready");
 
 /* =========================================================
    MMK LIVE PROJECT DASHBOARD
