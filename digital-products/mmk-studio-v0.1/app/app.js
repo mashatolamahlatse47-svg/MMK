@@ -2212,6 +2212,202 @@ if (pianoStopButton) {
 console.log("MMK PIANO KEYBOARD: persistent note automation ready");
 
 /* =========================================================
+   MMK PIANO → STUDIO TIMELINE
+   Renders selected piano notes into a WAV Blob, then sends
+   the result through the existing Audio Vault + clip system.
+   ========================================================= */
+
+function writeWav16(buffer) {
+  const channels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  const frameCount = buffer.length;
+  const bytesPerSample = 2;
+  const blockAlign = channels * bytesPerSample;
+  const dataSize = frameCount * blockAlign;
+  const arrayBuffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(arrayBuffer);
+
+  function writeString(offset, value) {
+    for (let i = 0; i < value.length; i++) {
+      view.setUint8(offset + i, value.charCodeAt(i));
+    }
+  }
+
+  writeString(0, "RIFF");
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, "WAVE");
+  writeString(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, 16, true);
+  writeString(36, "data");
+  view.setUint32(40, dataSize, true);
+
+  let offset = 44;
+
+  for (let i = 0; i < frameCount; i++) {
+    for (let channel = 0; channel < channels; channel++) {
+      const sample = buffer.getChannelData(channel)[i];
+      const clamped = Math.max(-1, Math.min(1, sample));
+      const value = clamped < 0
+        ? clamped * 0x8000
+        : clamped * 0x7fff;
+
+      view.setInt16(offset, value, true);
+      offset += 2;
+    }
+  }
+
+  return new Blob([arrayBuffer], { type: "audio/wav" });
+}
+
+async function renderPianoComposition() {
+  const selectedNotes = [...pianoKeyboardState.activeNotes.values()];
+
+  if (!selectedNotes.length) {
+    throw new Error("Choose at least one piano note first.");
+  }
+
+  const bpm = Number(project.bpm) || 90;
+  const stepDuration = 60 / bpm / 2;
+  const steps = 16;
+  const tail = 0.5;
+  const duration = (steps * stepDuration) + tail;
+  const sampleRate = 44100;
+
+  const offline = new OfflineAudioContext(
+    2,
+    Math.ceil(duration * sampleRate),
+    sampleRate
+  );
+
+  selectedNotes.forEach((freq, noteIndex) => {
+    for (let step = 0; step < steps; step++) {
+      const start = step * stepDuration;
+
+      const master = offline.createGain();
+      const filter = offline.createBiquadFilter();
+
+      const noteVolume =
+        0.055 / Math.max(1, Math.sqrt(selectedNotes.length));
+
+      master.gain.setValueAtTime(0.001, start);
+      master.gain.exponentialRampToValueAtTime(
+        noteVolume,
+        start + 0.008
+      );
+      master.gain.exponentialRampToValueAtTime(
+        0.001,
+        start + Math.min(0.65, stepDuration * 0.9)
+      );
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(
+        Math.min(4200, freq * 8),
+        start
+      );
+      filter.Q.value = 0.7;
+
+      master.connect(filter);
+      filter.connect(offline.destination);
+
+      const harmonics = [
+        [1, 1.00],
+        [2, 0.42],
+        [3, 0.20],
+        [4, 0.10]
+      ];
+
+      harmonics.forEach(([multiple, harmonicGain]) => {
+        const osc = offline.createOscillator();
+        const partial = offline.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(
+          freq * multiple,
+          start
+        );
+
+        partial.gain.setValueAtTime(
+          harmonicGain,
+          start
+        );
+        partial.gain.exponentialRampToValueAtTime(
+          0.001,
+          start + Math.min(0.7, stepDuration)
+        );
+
+        osc.connect(partial);
+        partial.connect(master);
+
+        osc.start(start);
+        osc.stop(
+          start + Math.min(0.75, stepDuration + 0.05)
+        );
+      });
+    }
+  });
+
+  return offline.startRendering();
+}
+
+async function addPianoCompositionToStudio() {
+  try {
+    if (!pianoKeyboardState.activeNotes.size) {
+      updatePianoAutomationStatus("CHOOSE NOTES FIRST");
+      setTimelineStatus("Choose piano notes before adding to Studio.");
+      return;
+    }
+
+    updatePianoAutomationStatus("RENDERING...");
+    setTimelineStatus("Rendering piano composition...");
+
+    const buffer = await renderPianoComposition();
+    const wavBlob = writeWav16(buffer);
+
+    const bpm = Number(project.bpm) || 90;
+    const name =
+      safeName(project.name || "MMK-Project") +
+      "-piano-" +
+      bpm +
+      "bpm.wav";
+
+    const file = new File(
+      [wavBlob],
+      name,
+      { type: "audio/wav" }
+    );
+
+    await addAudioClip(file);
+
+    updatePianoAutomationStatus("ADDED TO STUDIO");
+    setTimelineStatus("Piano composition added to Studio.");
+  } catch (error) {
+    console.error("MMK piano-to-studio error:", error);
+    updatePianoAutomationStatus("FAILED");
+    setTimelineStatus("Piano composition could not be added.");
+    alert("MMK Studio could not create the piano composition.");
+  }
+}
+
+const addPianoToStudioButton =
+  document.getElementById("addInstrumentToStudioBtn");
+
+if (addPianoToStudioButton) {
+  addPianoToStudioButton.addEventListener(
+    "click",
+    addPianoCompositionToStudio
+  );
+}
+
+console.log("MMK PIANO → STUDIO: timeline rendering ready");
+
+
+/* =========================================================
    MMK LIVE PROJECT DASHBOARD
    Reads existing Studio state. Does not control audio.
    ========================================================= */
