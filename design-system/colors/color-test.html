@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MMK Colour Test</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 24px;
+  background: #f5f5f5;
+  color: #111111;
+}
+h1 { margin-bottom: 6px; }
+p { color: #666666; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  min-height: 110px;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: bold;
+  box-sizing: border-box;
+}
+
+.black { background:#111111; color:white; }
+.gold { background:#d4af37; color:#111111; }
+.red { background:#b22222; color:white; }
+.green { background:#176b45; color:white; }
+.blue { background:#2457a6; color:white; }
+.white { background:#ffffff; color:#111111; border:1px solid #dddddd; }
+.success { background:#218739; color:white; }
+.warning { background:#c47a00; color:white; }
+.danger { background:#b42318; color:white; }
+.info { background:#2563a6; color:white; }
+</style>
+</head>
+<body>
+
+<h1>MMK DESIGN SYSTEM</h1>
+<p>Colour Test Sheet — Foundation</p>
+
+<div class="grid">
+  <div class="card black">BLACK<br>#111111</div>
+  <div class="card gold">GOLD<br>#D4AF37</div>
+  <div class="card red">RED<br>#B22222</div>
+  <div class="card green">GREEN<br>#176B45</div>
+  <div class="card blue">BLUE<br>#2457A6</div>
+  <div class="card white">WHITE<br>#FFFFFF</div>
+  <div class="card success">SUCCESS<br>#218739</div>
+  <div class="card warning">WARNING<br>#C47A00</div>
+  <div class="card danger">DANGER<br>#B42318</div>
+  <div class="card info">INFO<br>#2563A6</div>
+</div>
+
+</body>
+</html>
