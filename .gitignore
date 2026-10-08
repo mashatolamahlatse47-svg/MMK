@@ -114,3 +114,6 @@ id-documents/
 
 # MMK protected product material
 protected-products/
+
+# Local Netlify folder
+.netlify
