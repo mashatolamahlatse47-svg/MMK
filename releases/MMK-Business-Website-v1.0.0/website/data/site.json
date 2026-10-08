@@ -1,0 +1,56 @@
+{
+  "business": {
+    "name": "YOUR BUSINESS NAME",
+    "tagline": "Your business tagline.",
+    "description": "Describe what your business does and how it helps customers.",
+    "founder": "FOUNDER NAME",
+    "logo": "",
+    "heroImage": ""
+  },
+  "contact": {
+    "phone": "",
+    "whatsapp": "",
+    "email": "",
+    "location": "",
+    "hours": ""
+  },
+  "services": [
+    {
+      "title": "Service One",
+      "description": "Describe the first service."
+    },
+    {
+      "title": "Service Two",
+      "description": "Describe the second service."
+    },
+    {
+      "title": "Service Three",
+      "description": "Describe the third service."
+    }
+  ],
+  "products": [
+    {
+      "name": "Product One",
+      "description": "Describe the first product.",
+      "status": "Available"
+    },
+    {
+      "name": "Product Two",
+      "description": "Describe the second product.",
+      "status": "Coming Soon"
+    }
+  ],
+  "gallery": [],
+  "projects": [
+    {
+      "name": "Project One",
+      "description": "Describe a project or portfolio item."
+    }
+  ],
+  "social": {
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "other": ""
+  }
+}

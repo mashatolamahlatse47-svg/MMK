@@ -1,0 +1,131 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.container {
+  max-width: 850px;
+  margin: auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card,
+.receipt {
+  background: white;
+  padding: 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+label {
+  display: block;
+  margin: 12px 0;
+  font-weight: bold;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 0.7fr 1fr 0.8fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.item-row button {
+  margin-top: 6px;
+}
+
+.actions {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.receipt {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.receipt table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.receipt th,
+.receipt td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 5px;
+  text-align: left;
+}
+
+.totals {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.grand {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.thanks {
+  text-align: center;
+  margin-top: 30px;
+}
+
+@media (max-width: 600px) {
+  .item-row {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 10px;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .card,
+  .actions,
+  header {
+    display: none;
+  }
+
+  .receipt {
+    box-shadow: none;
+    margin: 0;
+    width: 100%;
+  }
+}
