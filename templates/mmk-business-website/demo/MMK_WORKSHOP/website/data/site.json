@@ -1,0 +1,65 @@
+{
+  "business": {
+    "name": "MMK_WORKSHOP",
+    "tagline": "Creative, digital and practical work.",
+    "description": "MMK_WORKSHOP turns ideas into useful creative, digital and practical business products and services.",
+    "founder": "Mahlatse Joseph Mashatola",
+    "logo": "",
+    "heroImage": ""
+  },
+  "contact": {
+    "phone": "0828638858",
+    "whatsapp": "0724422893",
+    "email": "mashatolamahlatse47@gmail.com",
+    "location": "Donkerhoek District 6, Tshwane Far East, Mamelodi Lethabong, next to the clinic",
+    "hours": "Monday-Sunday"
+  },
+  "services": [
+    {
+      "title": "Digital Services",
+      "description": "Practical digital services for individuals, small businesses and local organisations."
+    },
+    {
+      "title": "Websites & Business Tools",
+      "description": "Simple, useful websites and digital tools designed to help businesses organise and serve customers."
+    },
+    {
+      "title": "Creative Services",
+      "description": "Creative work across art, gallery, clothing, digital content and other practical creative projects."
+    }
+  ],
+  "products": [
+    {
+      "name": "MMK Stock & Profit Calculator",
+      "description": "A practical business tool for recording stock, sales and profit.",
+      "status": "Available"
+    },
+    {
+      "name": "MMK Receipt Generator",
+      "description": "A simple digital receipt tool for small business transactions.",
+      "status": "Available"
+    },
+    {
+      "name": "MMK Business Starter",
+      "description": "A practical starter package of digital business resources.",
+      "status": "Available"
+    }
+  ],
+  "gallery": [],
+  "projects": [
+    {
+      "name": "MMK Software & Digital Products",
+      "description": "Building practical software and digital products for everyday business needs."
+    },
+    {
+      "name": "MMK Creative & Business Systems",
+      "description": "Developing creative, digital and business systems from real-world ideas."
+    }
+  ],
+  "social": {
+    "facebook": "",
+    "instagram": "",
+    "tiktok": "",
+    "other": ""
+  }
+}
