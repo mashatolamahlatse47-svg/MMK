@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>MMK Background Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div>
+      <p class="brand">MMK</p>
+      <h1>Background Studio</h1>
+      <p class="subtitle">ART • GALLERY • CLOTHING</p>
+    </div>
+    <span class="offline-badge">OFFLINE</span>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h2>Prepare artwork for production.</h2>
+      <p>
+        Remove backgrounds, inspect your artwork and prepare clean files
+        for MMK suppliers.
+      </p>
+    </section>
+
+    <section class="card upload-card">
+      <h2>1. Import Artwork</h2>
+
+      <label for="imageInput" class="upload-button">
+        Choose Artwork
+      </label>
+
+      <input
+        id="imageInput"
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        hidden
+      >
+
+      <p id="fileName" class="file-name">
+        No artwork selected.
+      </p>
+    </section>
+
+    <section class="card workspace">
+      <div class="section-heading">
+        <h2>2. Artwork Preview</h2>
+        <span id="status" class="status">WAITING</span>
+      </div>
+
+      <div class="preview-area" id="previewArea">
+        <div class="empty-state">
+          <div class="empty-icon">🖼️</div>
+          <p>Your artwork will appear here.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="removeBgBtn" disabled>
+          Remove Background
+        </button>
+
+        <button id="resetBtn" class="secondary" disabled>
+          Reset
+        </button>
+      </div>
+    </section>
+
+    <section class="card quality-card">
+      <div class="section-heading">
+        <h2>3. Quality Check</h2>
+        <span id="qualityStatus" class="status">NOT READY</span>
+      </div>
+
+      <div class="quality-grid">
+        <div>
+          <span>Dimensions</span>
+          <strong id="dimensions">—</strong>
+        </div>
+
+        <div>
+          <span>Format</span>
+          <strong id="format">—</strong>
+        </div>
+
+        <div>
+          <span>Transparency</span>
+          <strong id="transparency">—</strong>
+        </div>
+
+        <div>
+          <span>Production</span>
+          <strong id="production">WAITING</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="card export-card">
+      <h2>4. Supplier File</h2>
+
+      <p>
+        Export a transparent PNG when the artwork passes MMK quality
+        inspection.
+      </p>
+
+      <button id="exportBtn" disabled>
+        Export Transparent PNG
+      </button>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>MMK • ART • GALLERY • CLOTHING • DIGITAL • SOFTWARE</p>
+    <p>MMK Background Studio v0.1</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

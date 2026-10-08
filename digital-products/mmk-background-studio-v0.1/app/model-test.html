@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MMK U2NETP Browser Test</title>
+</head>
+<body>
+  <h1>MMK U²-NetP Browser Test</h1>
+  <p id="status">Loading...</p>
+
+  <script type="module">
+    import * as ort from "./vendor/onnxruntime/ort.min.mjs";
+
+    ort.env.wasm.wasmPaths = "/vendor/onnxruntime/";
+    ort.env.wasm.numThreads = 1;
+
+    const status = document.getElementById("status");
+
+    try {
+      status.textContent = "Loading U²-NetP model...";
+
+      const session = await ort.InferenceSession.create(
+        "./models/u2netp/u2netp.onnx",
+        {
+          executionProviders: ["wasm"]
+        }
+      );
+
+      status.textContent =
+        "PASS: Browser loaded ONNX Runtime + U²-NetP. Input: " +
+        session.inputNames[0] +
+        " | Outputs: " +
+        session.outputNames.length;
+
+      console.log("MMK BROWSER MODEL TEST: PASS");
+      console.log("Input:", session.inputNames);
+      console.log("Outputs:", session.outputNames);
+    } catch (error) {
+      status.textContent = "FAIL: " + error.message;
+      console.error("MMK BROWSER MODEL TEST: FAIL", error);
+    }
+  </script>
+</body>
+</html>

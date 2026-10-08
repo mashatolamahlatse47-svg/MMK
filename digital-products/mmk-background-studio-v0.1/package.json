@@ -1,0 +1,10 @@
+{
+  "name": "mmk-background-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline MMK artwork background-removal and supplier-preparation studio",
+  "dependencies": {
+    "onnxruntime-web": "1.30.0"
+  }
+}
