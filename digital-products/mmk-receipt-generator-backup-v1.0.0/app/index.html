@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMK Receipt Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="container">
+
+    <header>
+      <h1>MMK Receipt Generator</h1>
+      <p>Create a simple professional receipt for your customer.</p>
+    </header>
+
+    <section class="card">
+      <h2>Business Details</h2>
+
+      <label>Business Name
+        <input id="businessName" type="text" placeholder="Your Business Name">
+      </label>
+
+      <label>Phone / WhatsApp
+        <input id="businessPhone" type="text" placeholder="071 000 0000">
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Receipt Details</h2>
+
+      <label>Receipt Number
+        <input id="receiptNumber" type="text" value="REC-0001">
+      </label>
+
+      <label>Date
+        <input id="receiptDate" type="date">
+      </label>
+
+      <label>Customer Name
+        <input id="customerName" type="text" placeholder="Customer name">
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Items</h2>
+
+      <div id="items"></div>
+
+      <button type="button" id="addItem">+ Add Item</button>
+    </section>
+
+    <section class="card">
+      <h2>Payment</h2>
+
+      <label>Payment Method
+        <select id="paymentMethod">
+          <option>Cash</option>
+          <option>EFT</option>
+          <option>Card</option>
+          <option>Mobile Payment</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <label>Payment Reference
+        <input id="paymentReference" type="text" placeholder="Optional reference">
+      </label>
+
+      <label>Discount
+        <input id="discount" type="number" min="0" step="0.01" value="0">
+      </label>
+    </section>
+
+    <section class="actions">
+      <button type="button" id="generate">Generate Receipt</button>
+      <button type="button" id="print">Print / Save PDF</button>
+    </section>
+
+    <section id="receipt" class="receipt">
+      <h2>RECEIPT</h2>
+
+      <p><strong id="outBusiness">Your Business</strong></p>
+      <p id="outPhone"></p>
+
+      <hr>
+
+      <p>Receipt: <span id="outNumber">REC-0001</span></p>
+      <p>Date: <span id="outDate"></span></p>
+      <p>Customer: <span id="outCustomer"></span></p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="outItems"></tbody>
+      </table>
+
+      <div class="totals">
+        <p>Subtotal: R<span id="outSubtotal">0.00</span></p>
+        <p>Discount: R<span id="outDiscount">0.00</span></p>
+        <p class="grand">TOTAL PAID: R<span id="outTotal">0.00</span></p>
+      </div>
+
+      <hr>
+
+      <p>Payment: <span id="outPayment">Cash</span></p>
+      <p>Reference: <span id="outReference"></span></p>
+
+      <p class="thanks">Thank you for your business.</p>
+
+      <small>© MMK Digital Products — Version 1.0.0</small>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
