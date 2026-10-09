@@ -1,0 +1,33 @@
+
+=== CURRENT COMMIT ===
+f592ec03b4bffc01d3eaadebf0a43f8d426b90ce
+
+=== RELEASE COMMIT ===
+ddd4886c9a39879d930e5a68bdcca3941830d5ec
+
+=== COMMITS AFTER RELEASE ===
+f592ec0 MMK: ignore local Netlify folder
+684dbfb MMK Background Studio: preserve browser AI engine assets
+cf40f0a MMK Studio: preserve backend and offline build guide
+eb33069 MMK: preserve Receipt Generator v1.0.0 backup
+4069e1b MMK: preserve reusable business website template
+c4988c5 MMK: preserve historical release packages
+ea76859 MMK: preserve design, sales, and frontier research assets
+1d554eb MMK Background Studio: preserve v0.1 development foundation
+
+=== RELEASE FILE SUMMARY ===
+tag v0.3.0
+
+MMK Scrap Yard v0.3.0
+ddd4886 MMK Scrap Yard: release v0.3.0
+ digital-products/mmk-scrap-yard-v0.1/README.md     |  39 ++
+ .../mmk-scrap-yard-v0.1/RELEASE_NOTES.md           |  29 ++
+ digital-products/mmk-scrap-yard-v0.1/VERSION       |   1 +
+ digital-products/mmk-scrap-yard-v0.1/app/app.js    | 431 +++++++++++++++++++++
+ .../mmk-scrap-yard-v0.1/app/index.html             |  28 ++
+ digital-products/mmk-scrap-yard-v0.1/app/style.css | 283 ++++++++++++++
+ .../scripts/build-dashboard-v0.2.py                | 162 ++++++++
+ .../scripts/build-history-premium-v0.3.py          | 228 +++++++++++
+ .../scripts/build-history-v0.2.py                  | 162 ++++++++
+ .../scripts/build-transaction-v0.2.py              | 134 +++++++
+ 10 files changed, 1497 insertions(+)

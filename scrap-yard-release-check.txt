@@ -1,0 +1,31 @@
+
+=== WORKING TREE ===
+## main
+A  ../mmk-tv-network/README.md
+A  ../mmk-tv-network/assets/css/style.css
+A  ../mmk-tv-network/assets/js/app.js
+A  ../mmk-tv-network/index.html
+A  ../mmk-tv-network/tests/check.sh
+?? ../mmk-business-starter-before-email-cleanup/
+?? ../mmk-business-starter/
+?? ../../scrap-yard-release-check.txt
+
+=== LATEST COMMITS ===
+f592ec0 (HEAD -> main) MMK: ignore local Netlify folder
+684dbfb MMK Background Studio: preserve browser AI engine assets
+cf40f0a MMK Studio: preserve backend and offline build guide
+
+=== RELEASE TAG DETAILS ===
+tag v0.3.0
+Tagger:     Mahlatse Joseph Mashatola <295218268+mashatolamahlatse47-svg@users.noreply.github.com>
+TaggerDate: Thu Oct 8 23:28:54 2026 +0200
+
+MMK Scrap Yard v0.3.0
+
+commit ddd4886c9a39879d930e5a68bdcca3941830d5ec
+Author:     Mahlatse Joseph Mashatola <295218268+mashatolamahlatse47-svg@users.noreply.github.com>
+AuthorDate: Thu Oct 8 23:28:23 2026 +0200
+Commit:     Mahlatse Joseph Mashatola <295218268+mashatolamahlatse47-svg@users.noreply.github.com>
+CommitDate: Thu Oct 8 23:28:23 2026 +0200
+
+    MMK Scrap Yard: release v0.3.0
