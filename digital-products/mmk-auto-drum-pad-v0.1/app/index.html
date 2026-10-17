@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101116">
+<title>MMK Auto Drum Pad</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">MMK <span>AUTO DRUM PAD</span></div>
+  <p>MAKE YOUR STORY. BUILD YOUR SOUND.</p>
+</header>
+
+<main>
+  <section class="transport panel">
+    <div>
+      <label for="bpm">TEMPO / BPM</label>
+      <input id="bpm" type="number" min="50" max="180" value="90">
+    </div>
+    <div>
+      <label for="volume">MASTER VOLUME</label>
+      <input id="volume" type="range" min="0" max="100" value="70">
+    </div>
+    <button id="start">▶ PLAY PATTERN</button>
+    <button id="stop" class="secondary">■ STOP ALL</button>
+  </section>
+
+  <section class="panel">
+    <h2>01 / LOOP PADS</h2>
+    <p class="hint">Tap a pad to repeat its sound. Tap it again to switch it off.</p>
+    <div id="pads" class="pads"></div>
+  </section>
+
+  <section class="panel">
+    <h2>02 / BUILD YOUR PATTERN</h2>
+    <p class="hint">Tap the squares to choose when each sound plays.</p>
+    <div class="grid-scroll">
+      <div id="sequencer"></div>
+    </div>
+    <div class="actions">
+      <button id="clear" class="secondary">CLEAR PATTERN</button>
+      <button id="save">SAVE PATTERN</button>
+      <button id="load" class="secondary">LOAD PATTERN</button>
+    </div>
+    <p id="status" role="status">Ready to make music.</p>
+  </section>
+
+  <section class="panel">
+    <h2>03 / TAKE YOUR BEAT WITH YOU</h2>
+    <p class="hint">Export the sequenced beat as a WAV file for your next music project.</p>
+    <button id="export">↓ EXPORT WAV</button>
+    <p class="hint">WAV export renders the 16-step pattern, not the live loop-pad performance.</p>
+  </section>
+</main>
+<footer>MMK • ART • GALLERY • CLOTHING • DIGITAL • SOFTWARE</footer>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+:root{color-scheme:dark;--bg:#101116;--panel:#1a1c25;--gold:#f5bd55;--muted:#b5b7c5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#f6f5f2;font:16px system-ui,sans-serif}
+header,main,footer{max-width:950px;margin:auto;padding:18px}
+header{padding-top:28px}
+.brand{font-weight:900;font-size:27px;letter-spacing:2px;color:var(--gold)}
+.brand span{display:block;color:white;font-size:15px;letter-spacing:4px}
+header p,.hint,footer{color:var(--muted);font-size:13px}
+.panel{background:var(--panel);border:1px solid #333542;border-radius:15px;padding:17px;margin:14px 0}
+h2{font-size:16px;letter-spacing:1px;margin:0 0 10px}
+.transport{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.transport>div{flex:1;min-width:115px}
+label{display:block;color:var(--muted);font-size:11px;margin-bottom:8px}
+input[type=number]{width:100%;padding:11px}
+input[type=range]{width:100%;min-height:40px}
+button,input{font:inherit}
+button{background:var(--gold);color:#17130b;font-weight:800;border:0;border-radius:9px;padding:12px;cursor:pointer}
+button:active{transform:scale(.98)}
+button.secondary{background:#343644;color:white}
+.pads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+.pad{min-height:86px;background:#292c39;color:white;border:1px solid #484b5d}
+.pad strong{display:block;font-size:15px}
+.pad small{display:block;color:var(--muted);margin-top:5px}
+.pad.active{background:#72511c;border-color:var(--gold);box-shadow:inset 0 0 0 2px var(--gold)}
+.grid-scroll{overflow-x:auto;margin-top:15px}
+.seqrow{display:grid;grid-template-columns:70px repeat(16,minmax(25px,1fr));gap:4px;min-width:570px;margin:7px 0;align-items:center}
+.rowname{font-size:11px;font-weight:800;color:#eee}
+.step{padding:0;height:28px;background:#343644;border:1px solid #454858;border-radius:4px}
+.step.on{background:var(--gold);border-color:#ffe0a0}
+.step.beat{box-shadow:inset 0 0 0 1px #777b8b}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+#status{font-size:13px;color:var(--gold);min-height:20px}
+footer{text-align:center;padding-bottom:35px}
+@media(max-width:480px){header,main,footer{padding-left:12px;padding-right:12px}.panel{padding:13px}.transport button{flex:1}.pads{gap:7px}.pad{padding:8px;min-height:78px}}
+
+.step.current{outline:2px solid white;outline-offset:1px}
+button:disabled{opacity:.55}
