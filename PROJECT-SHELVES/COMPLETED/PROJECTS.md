@@ -25,6 +25,7 @@ Release-verified MMK products.
 
    - Source: digital-products/mmk-business-starter
    - Release: releases/MMK-Business-Starter-v1.2.0
-   - Package: releases/MMK-Business-Starter-v1.2.0.zip
+   - Package: releases/MMK-Business-Starter-v1.2.0-release-verified.zip
+   - Historical original package: releases/MMK-Business-Starter-v1.2.0.zip
    - Version: 1.2.0
    - Status: Release verified; Founder Final Approval: APPROVED

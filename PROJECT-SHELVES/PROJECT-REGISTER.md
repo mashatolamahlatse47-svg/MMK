@@ -160,6 +160,9 @@ Release:
 releases/MMK-Business-Starter-v1.2.0
 
 Package:
+releases/MMK-Business-Starter-v1.2.0-release-verified.zip
+
+Historical original package:
 releases/MMK-Business-Starter-v1.2.0.zip
 
 Evidence:
