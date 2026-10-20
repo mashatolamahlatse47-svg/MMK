@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17251d">
+<title>MMK WhatsApp Order Forms v0.2.0</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f5ef;color:#202820;font:16px system-ui,sans-serif}
+header{background:#17251d;color:white;padding:22px}
+header small{color:#e5c36a;letter-spacing:2px}
+main{max-width:700px;margin:auto;padding:14px}
+.card{background:white;padding:17px;border-radius:14px;margin:14px 0}
+h1{font-size:26px;margin:8px 0}h2{font-size:20px;margin-top:0}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccd2c9;border-radius:8px;font:inherit;margin:5px 0 12px}
+label{font-size:14px;font-weight:650}
+button{padding:11px 14px;border:0;border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
+.primary{background:#16834a;color:white}.secondary{background:#e8eee8;color:#17251d}
+.danger{background:#f9e7e5;color:#8b2525}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.item{border-bottom:1px solid #e6e8e2;padding:13px 0}.item:last-child{border:0}
+.item small{display:block;color:#657064;margin-top:4px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.price{font-weight:750}.total{font-size:23px;font-weight:800}
+.full{width:100%}.muted{color:#667066;font-size:13px}
+.hidden{display:none!important}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+.status{padding:9px;background:#edf5ed;border-radius:8px;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+<small>MMK DIGITAL SERVICES</small>
+<h1 id="heading">My Order Menu</h1>
+<p>Manage your products. Receive orders on WhatsApp.</p>
+</header>
+<main>
+<section class="card">
+<h2>Business setup</h2>
+<label for="shopId">Your shop ID (use a unique name)</label>
+<input id="shopId" value="demo-takeaway" placeholder="e.g. my-bakery">
+<label for="business">Business name</label>
+<input id="business" value="MMK Demo Takeaway">
+<label for="whatsapp">Business WhatsApp number</label>
+<input id="whatsapp" inputmode="numeric" value="27820000000" placeholder="e.g. 27821234567">
+<button class="primary full" id="loadShop">Load / create this shop</button>
+<p class="muted">This prototype saves menus in this browser on this device. Shop IDs are labels, not passwords or secure accounts.</p>
+</section>
+
+<section class="card">
+<h2>Owner dashboard</h2>
+<nav>
+<button class="secondary" id="ownerTab">Manage menu</button>
+<button class="secondary" id="orderTab">Customer order form</button>
+</nav>
+<div id="owner">
+<hr>
+<h2 id="formTitle">Add a product</h2>
+<label for="productName">Product name</label>
+<input id="productName" placeholder="e.g. Chicken burger">
+<label for="productDescription">Description</label>
+<input id="productDescription" placeholder="Optional details">
+<label for="productPrice">Price (R)</label>
+<input id="productPrice" type="number" min="0.01" step="0.01" placeholder="25.00">
+<div class="actions">
+<button class="primary" id="saveProduct">Add product</button>
+<button class="secondary hidden" id="cancelEdit">Cancel edit</button>
+</div>
+<hr>
+<div class="row"><h2>My products</h2><span id="productCount" class="muted">0 items</span></div>
+<div id="productList"></div>
+<button class="primary full" id="saveMenu">Save menu</button>
+<p id="saveStatus" class="status" role="status">Ready.</p>
+</div>
+
+<div id="customer" class="hidden">
+<hr>
+<h2 id="menuTitle">Menu</h2>
+<div id="menu"></div>
+<label for="customerName">Your name</label>
+<input id="customerName" autocomplete="name" placeholder="Your name">
+<label for="customerPhone">Your contact number (optional)</label>
+<input id="customerPhone" type="tel" placeholder="0712345678">
+<label for="method">Collection or delivery</label>
+<select id="method"><option>Collection</option><option>Delivery</option></select>
+<label for="address">Delivery address</label>
+<input id="address" placeholder="Address or area">
+<label for="notes">Extra instructions</label>
+<textarea id="notes" placeholder="Special requests"></textarea>
+<h2>Your order</h2>
+<div id="summary">Choose products from the menu.</div>
+<p class="total" id="total">Total: R0.00</p>
+<button class="primary full" id="send">Send order on WhatsApp</button>
+<p class="muted">The business must reply to confirm your order. Do not send payment details in this form.</p>
+</div>
+</section>
+<p class="muted" style="text-align:center">MMK WhatsApp Order Forms · v0.2.0</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const initialProducts=[
+ {name:"Vetkoek",description:"Freshly made",price:15},
+ {name:"Chips",description:"Regular portion",price:20},
+ {name:"Burger",description:"Demo burger",price:35},
+ {name:"Cold drink",description:"",price:15}
+];
+let products=[...initialProducts];
+let cart=[];
+let editing=-1;
+let activeShop="demo-takeaway";
+let settings={business:"MMK Demo Takeaway",whatsapp:"27820000000"};
+
+const money=n=>"R"+Number(n).toFixed(2);
+const key=id=>"mmk-order-menu-v020:"+id;
+function say(message){$("saveStatus").textContent=message}
+function validShopId(id){return /^[a-zA-Z0-9_-]{2,40}$/.test(id)}
+function resetProductForm(){
+ editing=-1;
+ $("productName").value="";
+ $("productDescription").value="";
+ $("productPrice").value="";
+ $("formTitle").textContent="Add a product";
+ $("saveProduct").textContent="Add product";
+ $("cancelEdit").classList.add("hidden");
+}
+function persist(){
+ try{
+  localStorage.setItem(key(activeShop),JSON.stringify({settings,products}));
+  say("Saved on this device for shop: "+activeShop);
+  return true;
+ }catch(e){say("Could not save. Check browser storage.");return false}
+}
+function loadShop(){
+ const id=$("shopId").value.trim();
+ if(!validShopId(id)){alert("Use 2–40 letters, numbers, hyphens or underscores for the shop ID.");return}
+ activeShop=id;
+ try{
+  const saved=localStorage.getItem(key(id));
+  if(saved){
+   const data=JSON.parse(saved);
+   if(!data||!data.settings||!Array.isArray(data.products))throw Error("Invalid menu");
+   settings=data.settings;
+   products=data.products;
+  }else{
+   settings={business:$("business").value.trim()||"My Business",whatsapp:$("whatsapp").value.trim()};
+   products=initialProducts.map(p=>({...p}));
+   persist();
+  }
+ }catch(e){alert("Could not load this shop's saved menu. No data was changed.");return}
+ $("business").value=settings.business;
+ $("whatsapp").value=settings.whatsapp;
+ cart=products.map(()=>0);
+ resetProductForm();renderAll();
+ say("Loaded shop: "+activeShop);
+}
+function renderProducts(){
+ $("productCount").textContent=products.length+" items";
+ $("productList").replaceChildren();
+ products.forEach((p,i)=>{
+  const row=document.createElement("div");row.className="item";
+  const info=document.createElement("div");
+  const name=document.createElement("strong");name.textContent=p.name;
+  const desc=document.createElement("small");
+  desc.textContent=(p.description?p.description+" · ":"")+money(p.price);
+  info.append(name,desc);
+  const actions=document.createElement("div");actions.className="actions";
+  const edit=document.createElement("button");edit.className="secondary";edit.textContent="Edit";
+  edit.onclick=()=>{
+   editing=i;$("productName").value=p.name;$("productDescription").value=p.description||"";
+   $("productPrice").value=p.price;$("formTitle").textContent="Edit product";
+   $("saveProduct").textContent="Update product";$("cancelEdit").classList.remove("hidden");
+   $("productName").focus();
+  };
+  const del=document.createElement("button");del.className="danger";del.textContent="Delete";
+  del.onclick=()=>{
+   if(!confirm('Delete "'+p.name+'"?'))return;
+   products.splice(i,1);cart=products.map(()=>0);resetProductForm();renderAll();persist();
+  };
+  actions.append(edit,del);row.append(info,actions);$("productList").append(row);
+ });
+}
+function renderCustomerMenu(){
+ $("menu").replaceChildren();
+ $("menuTitle").textContent=settings.business+" menu";
+ products.forEach((p,i)=>{
+  const row=document.createElement("div");row.className="item row";
+  const info=document.createElement("div");
+  const name=document.createElement("strong");name.textContent=p.name;
+  const desc=document.createElement("small");desc.textContent=(p.description?p.description+" · ":"")+money(p.price);
+  info.append(name,desc);
+  const controls=document.createElement("div");controls.className="actions";
+  const minus=document.createElement("button");minus.className="secondary";minus.textContent="−";
+  const qty=document.createElement("span");qty.textContent=cart[i]||0;qty.style.minWidth="20px";
+  const plus=document.createElement("button");plus.className="secondary";plus.textContent="+";
+  minus.onclick=()=>{cart[i]=Math.max(0,(cart[i]||0)-1);renderCustomerMenu();renderTotal()};
+  plus.onclick=()=>{cart[i]=(cart[i]||0)+1;renderCustomerMenu();renderTotal()};
+  controls.append(minus,qty,plus);row.append(info,controls);$("menu").append(row);
+ });
+ renderTotal();
+}
+function renderTotal(){
+ const chosen=products.map((p,i)=>({...p,qty:cart[i]||0})).filter(p=>p.qty>0);
+ $("summary").textContent=chosen.length?chosen.map(p=>p.qty+" x "+p.name+" = "+money(p.qty*p.price)).join("\n"):"Choose products from the menu.";
+ $("summary").style.whiteSpace="pre-line";
+ $("total").textContent="Total: "+money(chosen.reduce((s,p)=>s+p.qty*p.price,0));
+}
+function renderAll(){renderProducts();renderCustomerMenu();$("heading").textContent=settings.business}
+$("loadShop").onclick=loadShop;
+$("saveProduct").onclick=()=>{
+ const name=$("productName").value.trim();
+ const description=$("productDescription").value.trim();
+ const raw=$("productPrice").value;
+ const price=Number(raw);
+ if(!name){alert("Enter a product name.");return}
+ if(raw===""||!Number.isFinite(price)||price<=0){alert("Enter a price greater than zero.");return}
+ if(name.length>100||description.length>200){alert("Name or description is too long.");return}
+ const product={name,description,price:Math.round(price*100)/100};
+ if(editing>=0){products[editing]=product;say("Product updated.");}
+ else{products.push(product);say("Product added.");}
+ cart=products.map(()=>0);resetProductForm();renderAll();persist();
+};
+$("cancelEdit").onclick=resetProductForm;
+$("saveMenu").onclick=()=>{
+ const business=$("business").value.trim(),whatsapp=$("whatsapp").value.trim();
+ if(!business){alert("Enter the business name.");return}
+ if(!/^[1-9]\d{7,14}$/.test(whatsapp)){alert("Use the WhatsApp number in international digits only, e.g. 27821234567.");return}
+ settings={business,whatsapp};renderAll();persist();
+};
+$("ownerTab").onclick=()=>{$("owner").classList.remove("hidden");$("customer").classList.add("hidden")};
+$("orderTab").onclick=()=>{$("owner").classList.add("hidden");$("customer").classList.remove("hidden");renderCustomerMenu()};
+$("send").onclick=()=>{
+ const name=$("customerName").value.trim();
+ const method=$("method").value,address=$("address").value.trim();
+ const phone=$("customerPhone").value.trim(),notes=$("notes").value.trim();
+ const chosen=products.map((p,i)=>({...p,qty:cart[i]||0})).filter(p=>p.qty>0);
+ if(!chosen.length){alert("Choose at least one product.");return}
+ if(!name){alert("Enter your name.");return}
+ if(method==="Delivery"&&!address){alert("Enter your delivery address.");return}
+ if(!/^[1-9]\d{7,14}$/.test(settings.whatsapp)){alert("The owner must set a valid WhatsApp number first.");return}
+ const total=chosen.reduce((s,p)=>s+p.qty*p.price,0);
+ const message=[
+  "NEW ORDER — "+settings.business,"Shop ID: "+activeShop,
+  "Customer: "+name,"Contact: "+(phone||"Not provided"),"Method: "+method,
+  ...(method==="Delivery"?["Address: "+address]:[]),"",
+  ...chosen.map(p=>p.qty+" x "+p.name+" — "+money(p.qty*p.price)),
+  "","TOTAL: "+money(total),...(notes?["Instructions: "+notes]:[]),
+  "","Please confirm this order."
+ ].join("\n");
+ window.location.href="https://wa.me/"+settings.whatsapp+"?text="+encodeURIComponent(message);
+};
+loadShop();
+</script>
+</body>
+</html>
