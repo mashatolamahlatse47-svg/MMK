@@ -1,0 +1,6 @@
+# MMK local authentication and customer data
+instance/
+__pycache__/
+*.py[cod]
+.env
+.env.*
