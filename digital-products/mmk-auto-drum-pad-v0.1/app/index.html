@@ -52,9 +52,25 @@
     <p class="hint">Export the sequenced beat as a WAV file for your next music project.</p>
     <button id="export">↓ EXPORT WAV</button>
     <p class="hint">WAV export renders the 16-step pattern, not the live loop-pad performance.</p>
+  <div class="actions">
+    <button id="record">● START RECORDING</button>
+    <button id="stopRecording" disabled>■ STOP &amp; DOWNLOAD</button>
+  </div>
+  <p class="hint">Live recording captures drum pads and sequencer audio as a WebM file. WAV export remains separate.</p>
   </section>
 </main>
 <footer>MMK • ART • GALLERY • CLOTHING • DIGITAL • SOFTWARE</footer>
 <script src="app.js"></script>
+
+<script>
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("MMK offline support registered"))
+      .catch(error => console.error("Offline registration failed:", error));
+  });
+}
+</script>
+
 </body>
 </html>

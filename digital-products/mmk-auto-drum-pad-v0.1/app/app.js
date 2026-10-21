@@ -14,6 +14,7 @@ const sounds = [
 
 const $ = id => document.getElementById(id);
 let audio = null, master = null, playing = false, timer = null;
+let recordingDestination = null, recorder = null, recordedChunks = [];
 let step = 0, activeLoops = new Set();
 let pattern = sounds.map(() => Array(16).fill(false));
 const loopTimers = new Map();
@@ -24,6 +25,8 @@ function audioReady(){
     master = audio.createGain();
     master.gain.value = Number($("volume").value)/100;
     master.connect(audio.destination);
+    recordingDestination = audio.createMediaStreamDestination();
+    master.connect(recordingDestination);
   }
   if(audio.state === "suspended") audio.resume();
 }
@@ -256,4 +259,73 @@ async function exportWav(){
   finally{btn.disabled=false}
 }
 $("export").addEventListener("click",exportWav);
+
+function startRecording(){
+  audioReady();
+
+  if(!window.MediaRecorder || !recordingDestination){
+    alert("Live recording is not supported by this browser.");
+    return;
+  }
+
+  try {
+    const preferred = "audio/webm;codecs=opus";
+    const mimeType = MediaRecorder.isTypeSupported(preferred)
+      ? preferred
+      : (MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "");
+
+    recorder = mimeType
+      ? new MediaRecorder(recordingDestination.stream, {mimeType})
+      : new MediaRecorder(recordingDestination.stream);
+
+    recordedChunks = [];
+
+    recorder.ondataavailable = event => {
+      if(event.data && event.data.size > 0) recordedChunks.push(event.data);
+    };
+
+    recorder.onstop = () => {
+      if(recordedChunks.length){
+        const blob = new Blob(recordedChunks, {
+          type: recorder.mimeType || "audio/webm"
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "MMK-live-recording-" +
+          new Date().toISOString().replace(/[:.]/g, "-") + ".webm";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      } else {
+        alert("No audio data was captured. Please try again.");
+      }
+
+      $("record").disabled = false;
+      $("stopRecording").disabled = true;
+      $("record").textContent = "● START RECORDING";
+    };
+
+    recorder.start();
+    $("record").disabled = true;
+    $("stopRecording").disabled = false;
+    $("record").textContent = "● RECORDING...";
+  } catch(error) {
+    console.error(error);
+    alert("Recording could not start. Please check browser support.");
+    $("record").disabled = false;
+    $("stopRecording").disabled = true;
+  }
+}
+
+function stopRecording(){
+  if(recorder && recorder.state !== "inactive"){
+    recorder.stop();
+  }
+}
+
+$("record").addEventListener("click", startRecording);
+$("stopRecording").addEventListener("click", stopRecording);
+
 renderPads();renderGrid();

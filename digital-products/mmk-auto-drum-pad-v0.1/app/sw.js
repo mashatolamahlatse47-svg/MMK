@@ -1,4 +1,4 @@
-const CACHE_NAME = "mmk-drum-pad-v1";
+const CACHE_NAME = "mmk-drum-pad-v2";
 const FILES = [
   "./",
   "./index.html",
