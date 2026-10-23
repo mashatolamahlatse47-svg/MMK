@@ -78,5 +78,30 @@
         "link": "https://mmk-auto-drum-pad.netlify.app/",
         "buttonLabel": "Open Live Demo",
         "status": "Live release documented"
+    },
+    {
+        "id": "MMK-008",
+        "name": "MMK Scrap Yard",
+        "category": "Business Software",
+        "description": "A local-browser demo for recording scrap material purchases and sales, calculating transaction profit or loss, and reviewing history. Data stays in the browser on the device.",
+        "price": 0,
+        "currency": "ZAR",
+        "priceLabel": "Contact MMK for pricing",
+        "available": false,
+        "link": "../scrap-yard/index.html",
+        "buttonLabel": "Open Local Demo",
+        "status": "Local-browser demo; not cloud-connected"
+    },
+    {
+        "id": "MMK-009",
+        "name": "MMK POS",
+        "category": "Business Software",
+        "description": "A browser-based point-of-sale demo for managing products and sales, with sales-history controls and PDF reporting. This release is not cloud-connected.",
+        "price": 0,
+        "currency": "ZAR",
+        "priceLabel": "Contact MMK for pricing",
+        "available": true,
+        "buttonLabel": "Enquire with MMK",
+        "status": "Packaged browser demo; not cloud-connected"
     }
 ]

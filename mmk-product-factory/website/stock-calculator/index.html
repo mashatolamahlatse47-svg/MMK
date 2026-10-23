@@ -212,7 +212,8 @@ READY
 
 <p>Save your business data to a backup file or restore a previous backup.</p>
 
-<button id="exportBackupButton" type="button">Export Backup</button>
+<button id="exportBackupButton" type="button">Export Readable Backup</button>
+<button id="exportRestoreFileButton" type="button">Download Restore File (JSON)</button>
 
 <input
   id="importBackupInput"
@@ -222,6 +223,15 @@ READY
 >
 
 <button id="importBackupButton" type="button">Restore Backup</button>
+
+<hr style="margin:20px 0; border:0; border-top:1px solid #d9e3dc;">
+
+<h3>Readable Business Downloads</h3>
+<p>Download a visual report to view or print, or export stock and sales into spreadsheet apps.</p>
+
+<button id="exportReportButton" type="button">Download Visual Business Report</button>
+<button id="exportStockCsvButton" type="button">Download Stock Spreadsheet (CSV)</button>
+<button id="exportSalesCsvButton" type="button">Download Sales Spreadsheet (CSV)</button>
 
 </div>
 
@@ -316,6 +326,7 @@ MMK • Digital Services • Products • Software
 <script src="config.js"></script>
 <script src="app.js"></script>
 <script src="stock.js"></script>
+<script src="report-export.js"></script>
 
 
 <script>
@@ -348,25 +359,102 @@ function mmkSaveData(data) {
     localStorage.setItem(MMK_STORAGE_KEY, JSON.stringify(data));
 }
 
-function mmkExportBackup(data) {
-    const blob = new Blob(
-        [JSON.stringify(data, null, 2)],
-        { type: "application/json" }
-    );
-
+function mmkDownloadFile(content, type, filename) {
+    const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-
     link.href = url;
-    link.download =
-        "MMK-Stock-Profit-Backup-" +
-        new Date().toISOString().slice(0, 10) +
-        ".json";
-
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function mmkExportBackup(data) {
+    const safeData = data && typeof data === "object"
+        ? data
+        : { products: [], sales: [], settings: { businessName: "MMK" } };
+
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[ch]);
+
+    const money = value => "R" + (Number(value) || 0).toLocaleString("en-ZA", {
+        minimumFractionDigits: 2, maximumFractionDigits: 2
+    });
+
+    const products = Array.isArray(safeData.products) ? safeData.products : [];
+    const sales = Array.isArray(safeData.sales) ? safeData.sales : [];
+    const business = safeData.settings?.businessName || "MMK";
+    const date = new Date().toLocaleString("en-ZA");
+    const totalUnits = products.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
+    const stockValue = products.reduce((sum, p) =>
+        sum + (Number(p.cost) || 0) * (Number(p.stock) || 0), 0);
+    const salesRevenue = sales.reduce((sum, sale) => sum + (Number(sale.revenue) || 0), 0);
+    const salesProfit = sales.reduce((sum, sale) => sum + (Number(sale.profit) || 0), 0);
+
+    const productRows = products.map(p => `<tr>
+        <td>${escapeHtml(p.name)}</td>
+        <td>${money(p.cost)}</td><td>${money(p.price)}</td>
+        <td>${Number(p.stock) || 0}</td>
+        <td>${money(((Number(p.price) || 0) - (Number(p.cost) || 0)) * (Number(p.stock) || 0))}</td>
+    </tr>`).join("");
+
+    const saleRows = sales.map(sale => `<tr>
+        <td>${escapeHtml(sale.date || "")}</td>
+        <td>${escapeHtml(sale.productName || "")}</td>
+        <td>${Number(sale.quantity) || 0}</td>
+        <td>${money(sale.revenue)}</td><td>${money(sale.profit)}</td>
+    </tr>`).join("");
+
+    const report = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(business)} - Stock Backup Report</title>
+<style>
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#17251d;background:#f3f7f4;margin:0;padding:18px}
+main{max-width:1000px;margin:auto;background:white;padding:22px;border-radius:14px}
+h1{margin-bottom:5px;color:#17663b}h2{margin-top:28px;border-bottom:2px solid #dce9df;padding-bottom:8px}
+.small{color:#5b6b60;font-size:13px}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.tile{padding:14px;background:#edf6ef;border-radius:9px}.tile strong{display:block;font-size:19px;margin-top:7px}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px;text-align:left;border-bottom:1px solid #e1e8e3;white-space:nowrap}
+th{background:#edf6ef}button{padding:11px 16px;margin:12px 8px 8px 0;border:0;border-radius:8px;background:#17663b;color:white;font-weight:bold}
+@media print{body{background:white;padding:0}main{padding:0;border-radius:0}.noprint{display:none}h2{break-after:avoid}tr{break-inside:avoid}}
+</style></head><body><main>
+<h1>${escapeHtml(business)}</h1><p>Stock &amp; Profit — Readable Backup Report</p>
+<p class="small">Created: ${escapeHtml(date)}. This is a readable report, not the restore file.</p>
+<div class="summary">
+<div class="tile">Products<strong>${products.length}</strong></div>
+<div class="tile">Units in stock<strong>${totalUnits}</strong></div>
+<div class="tile">Stock cost value<strong>${money(stockValue)}</strong></div>
+<div class="tile">Sales revenue<strong>${money(salesRevenue)}</strong></div>
+<div class="tile">Sales profit<strong>${money(salesProfit)}</strong></div>
+</div>
+<h2>Stock List</h2><div class="tablewrap"><table><thead><tr>
+<th>Product</th><th>Cost each</th><th>Price each</th><th>Quantity</th><th>Potential profit</th>
+</tr></thead><tbody>${productRows || '<tr><td colspan="5">No products recorded</td></tr>'}</tbody></table></div>
+<h2>Sales History</h2><div class="tablewrap"><table><thead><tr>
+<th>Date</th><th>Product</th><th>Quantity</th><th>Revenue</th><th>Profit</th>
+</tr></thead><tbody>${saleRows || '<tr><td colspan="5">No sales recorded</td></tr>'}</tbody></table></div>
+<p class="small">Keep the separate JSON restore file in a safe place to restore your records in MMK.</p>
+<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>
+</main></body></html>`;
+
+    mmkDownloadFile(
+        report,
+        "text/html;charset=utf-8",
+        "MMK-Readable-Stock-Backup-" + new Date().toISOString().slice(0, 10) + ".html"
+    );
+}
+
+function mmkExportRestoreFile(data) {
+    mmkDownloadFile(
+        JSON.stringify(data, null, 2),
+        "application/json;charset=utf-8",
+        "MMK-Stock-Profit-Restore-" + new Date().toISOString().slice(0, 10) + ".json"
+    );
 }
 
 function mmkImportBackup(file, callback) {
@@ -440,6 +528,7 @@ console.log("MMK Product Storage Bridge: READY");
 /* MMK BACKUP CONTROLS v1.0.0 */
 document.addEventListener("DOMContentLoaded", () => {
   const exportButton = document.getElementById("exportBackupButton");
+  const restoreExportButton = document.getElementById("exportRestoreFileButton");
   const importInput = document.getElementById("importBackupInput");
   const importButton = document.getElementById("importBackupButton");
 
@@ -451,6 +540,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       MMKOffline.exportBackup(MMKOffline.load());
+    });
+  }
+
+  if (restoreExportButton) {
+    restoreExportButton.addEventListener("click", () => {
+      if (!window.MMKOffline) {
+        alert("Offline storage is not available.");
+        return;
+      }
+      mmkExportRestoreFile(MMKOffline.load());
     });
   }
 
