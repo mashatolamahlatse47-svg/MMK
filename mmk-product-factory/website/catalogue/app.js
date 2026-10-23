@@ -1,71 +1,67 @@
 const productList = document.getElementById("product-list");
 
-if (!productList) {
-    throw new Error("MMK catalogue: product list element not found.");
+function makeText(tag, className, value) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    element.textContent = value == null ? "" : String(value);
+    return element;
 }
 
-productList.innerHTML = "<p>Loading MMK products...</p>";
+function renderProduct(product) {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    card.appendChild(makeText("p", "product-category", product.category));
+    card.appendChild(makeText("h3", "", product.name));
+    card.appendChild(makeText("p", "product-description", product.description));
 
-fetch("./products.json")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
+    let priceLabel = product.priceLabel;
+    if (!priceLabel) {
+        const price = Number(product.price);
+        priceLabel = product.available && price > 0
+            ? `${product.currency || "R"} ${price.toFixed(2)}`
+            : (product.available ? "Contact MMK for details" : "Coming soon");
+    }
+    card.appendChild(makeText("p", "product-price", priceLabel));
 
-        return response.json();
-    })
-    .then(products => {
-        productList.innerHTML = "";
+    if (product.status) {
+        card.appendChild(makeText("p", "product-status", product.status));
+    }
 
-        products.forEach(product => {
-            const card = document.createElement("article");
-            card.className = "product-card";
+    const link = document.createElement("a");
+    link.className = "catalogue-button";
+    link.textContent = product.buttonLabel || (product.link ? "Open Product" : "Enquire with MMK");
+    link.href = product.link ||
+        `mailto:mashatolamahlatse47@gmail.com?subject=${encodeURIComponent("MMK product enquiry: " + product.name)}`;
 
-            const price = Number(product.price);
+    if (/^https:\/\//i.test(link.href)) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+    }
 
-            let priceLabel = "Coming Soon";
+    card.appendChild(link);
+    return card;
+}
 
-            if (product.available && price > 0) {
-                priceLabel = `${product.currency} ${price.toFixed(2)}`;
-            } else if (product.available && price === 0) {
-                priceLabel = "Free / Demo";
+if (!productList) {
+    console.error("MMK Shop: product list element not found.");
+} else {
+    fetch("./products.json")
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
+        .then(products => {
+            if (!Array.isArray(products)) throw new Error("Product data is not a list.");
+            productList.replaceChildren();
+            products.forEach(product => productList.appendChild(renderProduct(product)));
+            if (products.length === 0) {
+                productList.appendChild(makeText("p", "", "Products will be listed here soon."));
             }
-
-            card.innerHTML = `
-                <h3>${product.name}</h3>
-                <p><strong>${product.category}</strong></p>
-                <p>${product.description}</p>
-                <p><strong>${priceLabel}</strong></p>
-            `;
-
-            if (product.link) {
-                const link = document.createElement("a");
-
-                link.href = product.link;
-                link.className = "catalogue-button";
-                link.textContent = "Open Product";
-
-                card.appendChild(link);
-            } else {
-                const status = document.createElement("p");
-
-                status.textContent = product.available
-                    ? "Product information available"
-                    : "Coming Soon";
-
-                card.appendChild(status);
-            }
-
-            productList.appendChild(card);
+        })
+        .catch(error => {
+            console.error("MMK Shop loading failed:", error);
+            productList.replaceChildren(
+                makeText("p", "", "The catalogue could not load. Please contact MMK for product information.")
+            );
         });
-    })
-    .catch(error => {
-        console.error("MMK catalogue loading failed:", error);
-
-        productList.innerHTML = `
-            <p>
-                The MMK product catalogue could not be loaded.
-                Please try again later.
-            </p>
-        `;
-    });
+}

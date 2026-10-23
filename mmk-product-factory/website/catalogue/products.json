@@ -24,7 +24,9 @@
         "description": "Starter grocery ordering system.",
         "price": 0,
         "currency": "ZAR",
-        "available": true
+        "available": true,
+        "priceLabel": "Contact MMK for details",
+        "status": "Enquire for details"
     },
     {
         "id": "MMK-004",
@@ -34,6 +36,47 @@
         "price": 0,
         "currency": "ZAR",
         "available": true,
-        "link": "../stock-calculator/index.html"
+        "link": "../stock-calculator/index.html",
+        "priceLabel": "Demo",
+        "status": "Calculator demo"
+    },
+    {
+        "id": "MMK-005",
+        "name": "MMK WhatsApp Order Forms",
+        "category": "Business Software",
+        "description": "A browser-based order form that helps a small business prepare customer orders for WhatsApp. Settings are stored in the browser and do not automatically sync between devices.",
+        "price": 0,
+        "currency": "ZAR",
+        "priceLabel": "Contact MMK for pricing",
+        "available": true,
+        "link": "https://aesthetic-custard-ae5970.netlify.app/",
+        "buttonLabel": "Open Live Demo",
+        "status": "Live demo"
+    },
+    {
+        "id": "MMK-006",
+        "name": "MMK Receipt Generator",
+        "category": "Business Software",
+        "description": "Create customer receipts, calculate totals, and print or save receipts as PDF. Documented release: v1.1.0.",
+        "price": 0,
+        "currency": "ZAR",
+        "priceLabel": "Contact MMK for pricing",
+        "available": true,
+        "link": "https://mmk-receipt-generator.netlify.app/",
+        "buttonLabel": "Open Live Demo",
+        "status": "Live release documented"
+    },
+    {
+        "id": "MMK-007",
+        "name": "MMK Auto Drum Pad",
+        "category": "Creative Software",
+        "description": "A browser-based beat-making tool with drum pads, a 16-step sequencer, BPM controls and WAV export. Documented release: v1.0.0.",
+        "price": 0,
+        "currency": "ZAR",
+        "priceLabel": "Contact MMK for pricing",
+        "available": true,
+        "link": "https://mmk-auto-drum-pad.netlify.app/",
+        "buttonLabel": "Open Live Demo",
+        "status": "Live release documented"
     }
 ]

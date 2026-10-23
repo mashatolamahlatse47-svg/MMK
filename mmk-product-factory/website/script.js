@@ -1,44 +1,53 @@
 document.addEventListener("DOMContentLoaded", () => {
     const productSection = document.querySelector("#products");
-
-    if (!productSection) return;
-
-    const grid = productSection.querySelector(".grid");
-
+    const grid = productSection && productSection.querySelector(".grid");
     if (!grid) return;
 
-    fetch("../data/products.json")
+    fetch("catalogue/products.json")
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.json();
         })
         .then(products => {
-            grid.innerHTML = "";
+            if (!Array.isArray(products)) throw new Error("Product data is not a list.");
+            grid.replaceChildren();
 
-            products.forEach(product => {
+            products.slice(0, 4).forEach(product => {
                 const card = document.createElement("article");
                 card.className = "card";
 
-                const price = Number(product.price);
+                const category = document.createElement("p");
+                category.className = "eyebrow";
+                category.textContent = product.category || "MMK PRODUCT";
+                card.appendChild(category);
 
-                card.innerHTML = `
-                    <span class="eyebrow">${product.category}</span>
-                    <h3>${product.name}</h3>
-                    <p>${product.description}</p>
-                    <p><strong>${price > 0 ? `R${price.toFixed(2)}` : "Coming Soon"}</strong></p>
-                    ${
-                        product.id === "MMK-004"
-                            ? `<a href="stock-calculator/index.html" class="button primary">Open Calculator</a>`
-                            : ""
-                    }
-                `;
+                const title = document.createElement("h3");
+                title.textContent = product.name || "MMK Product";
+                card.appendChild(title);
 
+                const description = document.createElement("p");
+                description.textContent = product.description || "";
+                card.appendChild(description);
+
+                const price = document.createElement("p");
+                if (product.priceLabel) {
+                    price.textContent = product.priceLabel;
+                } else if (Number(product.price) > 0) {
+                    price.textContent = `${product.currency === "ZAR" ? "R" : (product.currency || "")}${Number(product.price).toFixed(2)}`;
+                } else {
+                    price.textContent = "Contact MMK for details";
+                }
+                card.appendChild(price);
+
+                const link = document.createElement("a");
+                link.className = "button primary";
+                link.href = "catalogue/index.html";
+                link.textContent = "View in Shop";
+                card.appendChild(link);
                 grid.appendChild(card);
             });
         })
         .catch(error => {
-            console.error("Catalogue loading failed:", error);
+            console.error("MMK homepage products failed to load:", error);
         });
 });

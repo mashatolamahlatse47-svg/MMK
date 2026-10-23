@@ -351,3 +351,10 @@ footer p {
         padding: 23px;
     }
 }
+
+
+/* MMK website navigation and content refinements */
+.navbar nav a[aria-current="page"] { color: var(--gold-light, #f3d58d); }
+.section, .contact { scroll-margin-top: 90px; }
+#products .grid { align-items: stretch; }
+#products .card { overflow-wrap: anywhere; }
